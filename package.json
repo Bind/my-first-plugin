@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@darkforest_eth/types": "^6.1.23",
+    "@projectsophon/df-plugin-dev-server": "^1.1.0",
+    "events": "^3.3.0",
+    "react": "^17.0.2"
+  },
+  "scripts": {
+    "dev": "df-plugin-dev-server --dir ./entry",
+    "build": ""
+  }
+}
