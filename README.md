@@ -16,9 +16,7 @@ then run;
 That will spin up the `df-plugin-dev-server` and all you'll need to do is create a new plugin with this code:
 
 ```
-import Plugin from "http://127.0.0.1:2222/plugin.ts?dev"
-
-export default Plugin;
+export { default } from "http://127.0.0.1:2222/plugin.ts?dev"
 ```
 
 This will setup some configuration client side to pull in code from your local machine. (HMR soon tm)
