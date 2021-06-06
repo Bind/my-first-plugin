@@ -6,7 +6,11 @@ This project is setup to use the [plugin dev server](https://github.com/projects
 
 To get started run:
 
-`yarn dev`
+`$ yarn install`  
+
+then run;
+
+`$ yarn dev`
 
 
 That will spin up the `df-plugin-dev-server` and all you'll need to do is create a new plugin with this code:
