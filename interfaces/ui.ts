@@ -34,7 +34,9 @@ export enum GameUIManagerEvent {
   InitializedPlayer = "InitializedPlayer",
   InitializedPlayerError = "InitializedPlayerError",
 }
-
+/*
+DOES NOT INCLUDE ALL METHODS
+*/
 export interface GameUIManager extends EventEmitter {
   radiusMap: Record<PlanetLevel, number>;
   gameManager: GameManager;

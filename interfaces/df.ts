@@ -29,6 +29,9 @@ import {
 } from "./utils";
 import { EventEmitter } from "events";
 
+/*
+DOES NOT INCLUDE ALL METHODS
+*/
 export interface GameManager extends EventEmitter {
   terminal: any;
   account: any;
