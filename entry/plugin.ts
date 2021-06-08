@@ -1,7 +1,8 @@
-import { GameManager } from "../interfaces/df";
-import { GameUIManager } from "../interfaces/ui";
+import GameManager from "../client_declarations/src/Backend/GameLogic/GameManager";
+import GameUIManager from "../client_declarations/src/Backend/GameLogic/GameUIManager";
+
 declare const df: GameManager;
-declare const ui: GameManager;
+declare const ui: GameUIManager;
 /**
  * Remember, you have access these globals:
  * 1. df - Just like the df object in your console.
