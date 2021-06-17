@@ -1,30 +1,46 @@
 import GameManager from "@df/GameManager";
 import GameUIManager from "@df/GameUIManager";
+import { App } from "src/view";
+import { html, render } from "htm/preact";
+
+declare global {
+  interface Window {
+    __CORELOOP__: number[];
+  }
+}
 
 declare const df: GameManager;
 declare const ui: GameUIManager;
-/**
- * Remember, you have access these globals:
- * 1. df - Just like the df object in your console.
- * 2. ui - For interacting with the game's user interface.
- *
- * Let's log these to the console when you run your plugin!
- */
 
-console.log(df, ui);
-
+import { Repeater } from "../src/core";
 class Plugin {
-  constructor() {}
+  repeater: Repeater;
+  container: HTMLDivElement | undefined;
+  root: void;
+  stop() {
+    window.__CORELOOP__.forEach((id) => window.clearInterval(id));
+  }
+  constructor() {
+    this.repeater = new Repeater();
+    this.root = undefined;
+  }
 
   /**
    * Called when plugin is launched with the "run" button.
    */
-  async render(container) {}
+  async render(container: HTMLDivElement) {
+    this.container = container;
+    container.style.width = "380px";
+    this.root = render(html`<${App} repeater=${this.repeater} />`, container);
+  }
 
   /**
    * Called when plugin modal is closed.
    */
-  destroy() {}
+  destroy() {
+    window.__CORELOOP__.forEach((id) => window.clearInterval(id));
+    if (this.container) render(html`<div></div>`, this.container);
+  }
 }
 
 /**
