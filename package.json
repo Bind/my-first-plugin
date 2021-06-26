@@ -14,6 +14,6 @@
   },
   "scripts": {
     "dev": "df-plugin-dev-server --dir entry",
-    "build": "esbuild plugins/* --bundle --format=esm --target=es2020 --outdir=dist"
+    "build": "esbuild entry/* --bundle --format=esm --target=es2020 --outdir=dist"
   }
 }
