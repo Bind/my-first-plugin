@@ -1,1 +1,1 @@
-export declare function Leaderboard(): JSX.Element;
+export declare function LeadboardDisplay(): JSX.Element;

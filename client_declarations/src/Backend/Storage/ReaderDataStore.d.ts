@@ -1,12 +1,12 @@
 /// <reference types="react" />
-import { EthAddress, SpaceType, Biome, Planet, LocatablePlanet, WorldLocation, LocationId, ArtifactId } from "@darkforest_eth/types";
+import { EthConnection } from "@darkforest_eth/network";
+import { ArtifactId, Biome, EthAddress, LocatablePlanet, LocationId, Planet, SpaceType, WorldLocation } from "@darkforest_eth/types";
 import { TerminalHandle } from "../../Frontend/Views/Terminal";
 import { ContractConstants } from "../../_types/darkforest/api/ContractsAPITypes";
 import { AddressTwitterMap } from "../../_types/darkforest/api/UtilityServerAPITypes";
-import ContractsAPI from "../GameLogic/ContractsAPI";
-import EthConnection from "../Network/EthConnection";
+import { ContractsAPI } from "../GameLogic/ContractsAPI";
 import PersistentChunkStore from "./PersistentChunkStore";
-export declare enum SinglePlanetDataStoreEvent {
+export declare const enum SinglePlanetDataStoreEvent {
     REFRESHED_PLANET = "REFRESHED_PLANET",
     REFRESHED_ARTIFACT = "REFRESHED_ARTIFACT"
 }

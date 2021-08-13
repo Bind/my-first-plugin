@@ -1,6 +1,6 @@
 import { LocatablePlanet, LocationId, PlanetLevel, WorldCoords } from "@darkforest_eth/types";
 import Viewport from "../../Frontend/Game/Viewport";
-import { ExploredChunkData } from "../../_types/global/GlobalTypes";
+import { Chunk } from "../../_types/global/GlobalTypes";
 import GameManager from "./GameManager";
 import GameUIManager from "./GameUIManager";
 export interface PlanetRenderInfo {
@@ -18,17 +18,20 @@ export interface Radii {
 export declare class ViewportEntities {
     readonly gameManager: GameManager;
     readonly uiManager: GameUIManager;
-    cachedExploredChunks: Set<ExploredChunkData>;
+    cachedExploredChunks: Set<Chunk>;
     cachedPlanets: Map<LocationId, PlanetRenderInfo>;
     cachedPlanetsAsList: PlanetRenderInfo[];
     constructor(gameManager: GameManager, gameUIManager: GameUIManager);
+    startRefreshing(): void;
     getPlanetsAndChunks(): {
-        chunks: Set<ExploredChunkData>;
+        chunks: Set<Chunk>;
         cachedPlanets: Map<LocationId, PlanetRenderInfo>;
     };
     updateLocationsAndChunks(): void;
     recalculateViewportChunks(viewport: Viewport): void;
+    loadPlanetMessages(): Promise<void>;
     recalculateViewportPlanets(viewport: Viewport): void;
+    replacePlanets(newPlanetsInViewport: LocatablePlanet[]): void;
     /**
      * Gets the planet that is closest to the given coordinates. Filters out irrelevant planets
      * using the `radiusMap` parameter, which specifies how close a planet must be in order to

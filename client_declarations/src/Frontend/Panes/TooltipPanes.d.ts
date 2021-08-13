@@ -8,7 +8,6 @@ export declare function CurrentMiningTooltipPane(): JSX.Element;
 export declare function BonusTooltipPane(): JSX.Element;
 export declare function SilverTooltipPane(): JSX.Element;
 export declare function EnergyTooltipPane(): JSX.Element;
-export declare function SelectedEnergyTooltipPane(): JSX.Element;
 export declare function PlanetRankTooltipPane(): JSX.Element;
 export declare function MaxLevelTooltipPane(): JSX.Element;
 export declare function SilverProdTooltipPane(): JSX.Element;

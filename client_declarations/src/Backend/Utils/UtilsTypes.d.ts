@@ -1,10 +1,11 @@
-import { PlanetLevel } from '@darkforest_eth/types';
-import { RGBVec, HSLVec } from '../../Frontend/Renderers/GameRenderer/EngineTypes';
+import { HSLVec, RGBVec } from '../../Frontend/Renderers/GameRenderer/EngineTypes';
 import { HatType } from '../../Frontend/Utils/Hats';
-export declare type RuinsInfo = Record<PlanetLevel, {
-    weights: [number, number, number, number];
-    props: [number, number, number, number];
-}>;
+export declare type RuinsInfo = {
+    [PlanetLevel: number]: {
+        weights: [number, number, number, number];
+        props: [number, number, number, number];
+    };
+};
 export interface PlanetCosmeticInfo {
     baseHue: number;
     baseStr: string;

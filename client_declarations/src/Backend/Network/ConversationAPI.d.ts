@@ -1,4 +1,4 @@
-import { ConversationArtifact, Conversation, EthAddress, ArtifactId } from '@darkforest_eth/types';
+import { ArtifactId, Conversation, ConversationArtifact, EthAddress } from '@darkforest_eth/types';
 export declare function startConversationOpenAI(artifact: ConversationArtifact, artifactId: string, username: string): Promise<Conversation>;
 export declare function stepConversationOpenAI(artifactId: string, message: string): Promise<Conversation>;
 /**

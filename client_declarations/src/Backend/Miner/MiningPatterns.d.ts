@@ -1,6 +1,6 @@
-import { Rectangle } from '../../_types/global/GlobalTypes';
 import { WorldCoords } from '@darkforest_eth/types';
-export declare enum MiningPatternType {
+import { Rectangle } from '../../_types/global/GlobalTypes';
+export declare const enum MiningPatternType {
     Home = 0,
     Target = 1,
     Spiral = 2,

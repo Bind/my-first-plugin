@@ -1,4 +1,4 @@
-import { TxIntent, UnconfirmedInit, UnconfirmedMove, UnconfirmedUpgrade, UnconfirmedBuyHat, UnconfirmedPlanetTransfer, UnconfirmedFindArtifact, UnconfirmedDepositArtifact, UnconfirmedWithdrawArtifact, UnconfirmedProspectPlanet, UnconfirmedActivateArtifact, UnconfirmedDeactivateArtifact, UnconfirmedReveal, UnconfirmedBuyGPTCredits, UnconfirmedWithdrawSilver } from '@darkforest_eth/types';
+import { TxIntent, UnconfirmedActivateArtifact, UnconfirmedBuyGPTCredits, UnconfirmedBuyHat, UnconfirmedClaim, UnconfirmedDeactivateArtifact, UnconfirmedDepositArtifact, UnconfirmedFindArtifact, UnconfirmedInit, UnconfirmedMove, UnconfirmedPlanetTransfer, UnconfirmedProspectPlanet, UnconfirmedReveal, UnconfirmedUpgrade, UnconfirmedWithdrawArtifact, UnconfirmedWithdrawSilver } from '@darkforest_eth/types';
 export declare function isUnconfirmedReveal(txIntent: TxIntent): txIntent is UnconfirmedReveal;
 export declare function isUnconfirmedInit(txIntent: TxIntent): txIntent is UnconfirmedInit;
 export declare function isUnconfirmedMove(txIntent: TxIntent): txIntent is UnconfirmedMove;
@@ -13,3 +13,4 @@ export declare function isUnconfirmedActivateArtifact(txIntent: TxIntent): txInt
 export declare function isUnconfirmedDeactivateArtifact(txIntent: TxIntent): txIntent is UnconfirmedDeactivateArtifact;
 export declare function isUnconfirmedWithdrawSilver(txIntent: TxIntent): txIntent is UnconfirmedWithdrawSilver;
 export declare function isUnconfirmedBuyGPTCredits(txIntent: TxIntent): txIntent is UnconfirmedBuyGPTCredits;
+export declare function isUnconfirmedClaim(txIntent: TxIntent): txIntent is UnconfirmedClaim;

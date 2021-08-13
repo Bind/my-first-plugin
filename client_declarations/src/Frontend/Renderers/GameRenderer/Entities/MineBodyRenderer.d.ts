@@ -1,5 +1,5 @@
-import { CanvasCoords } from "../../../../Backend/Utils/Coordinates";
 import { Planet, WorldCoords } from "@darkforest_eth/types";
+import { CanvasCoords } from "../../../../Backend/Utils/Coordinates";
 import { RGBVec } from "../EngineTypes";
 import { MINE_PROGRAM_DEFINITION } from "../Programs/MineProgram";
 import { GenericRenderer } from "../WebGL/GenericRenderer";

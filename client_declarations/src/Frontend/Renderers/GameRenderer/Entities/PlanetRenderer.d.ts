@@ -1,5 +1,5 @@
-import { mat4 } from 'gl-matrix';
 import { Planet, WorldCoords } from '@darkforest_eth/types';
+import { mat4 } from 'gl-matrix';
 import { PLANET_PROGRAM_DEFINITION } from '../Programs/PlanetProgram';
 import { GenericRenderer } from '../WebGL/GenericRenderer';
 import { WebGLManager } from '../WebGL/WebGLManager';

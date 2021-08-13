@@ -1,6 +1,6 @@
-import { PlanetCosmeticInfo, RuinsInfo } from "../Utils/UtilsTypes";
-import { Planet, EthAddress, LocationId, Biome, UpgradeBranchName, ArtifactId } from "@darkforest_eth/types";
+import { ArtifactId, Biome, EthAddress, LocationId, Planet, UpgradeBranchName } from "@darkforest_eth/types";
 import { HSLVec, RGBAVec, RGBVec } from "../../Frontend/Renderers/GameRenderer/EngineTypes";
+import { PlanetCosmeticInfo, RuinsInfo } from "../Utils/UtilsTypes";
 export declare type PixelCoords = {
     x: number;
     y: number;
@@ -13,8 +13,12 @@ export declare class ProcgenUtils {
     static blurbsById: Map<LocationId, string>;
     static blurbs2ById: Map<LocationId, string>;
     static cosmeticByLocId: Map<LocationId, PlanetCosmeticInfo>;
-    static baseByBiome: Record<Biome, HSLVec>;
-    static oceanByBiome: Record<Biome, HSLVec>;
+    static baseByBiome: {
+        readonly [Biome: number]: HSLVec;
+    };
+    static oceanByBiome: {
+        readonly [Biome: number]: HSLVec;
+    };
     static strByBiome: Map<Biome, string>;
     static getBiomeRgbStr(biome: Biome): string;
     static grayColors: PlanetCosmeticInfo;

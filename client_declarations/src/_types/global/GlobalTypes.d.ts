@@ -1,5 +1,5 @@
+import { EmojiFlagBody, LocatablePlanet, LocationId, Planet, PlanetMessage, WorldCoords, WorldLocation } from '@darkforest_eth/types';
 import { Dispatch, SetStateAction } from 'react';
-import { LocationId, Planet, LocatablePlanet, WorldCoords, WorldLocation } from '@darkforest_eth/types';
 import GameManager from '../../Backend/GameLogic/GameManager';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
 export declare type Hook<T> = [T, Dispatch<SetStateAction<T>>];
@@ -22,7 +22,7 @@ export declare type HashConfig = {
     perlinMirrorX: boolean;
     perlinMirrorY: boolean;
 };
-export declare enum StatIdx {
+export declare const enum StatIdx {
     EnergyCap = 0,
     EnergyGro = 1,
     Range = 2,
@@ -30,11 +30,20 @@ export declare enum StatIdx {
     Defense = 4
 }
 export declare function isLocatable(planet: Planet): planet is LocatablePlanet;
+export declare function isEmojiFlagMessage(planetMessage: PlanetMessage<unknown>): planetMessage is PlanetMessage<EmojiFlagBody>;
+/**
+ * Ok, this is gonna sound weird, but all rectangles are squares. Also, we only permit side lengths
+ * that are powers of two, and ALSO!! The side lengths must be between {@link MIN_CHUNK_SIZE} and
+ * {@link MAX_CHUNK_SIZE}.
+ */
 export interface Rectangle {
     bottomLeft: WorldCoords;
     sideLength: number;
 }
-export declare class ExploredChunkData {
+/**
+ * Represents a fully mined aligned square.
+ */
+export declare class Chunk {
     chunkFootprint: Rectangle;
     planetLocations: WorldLocation[];
     perlin: number;
@@ -57,4 +66,9 @@ export interface RevealCountdownInfo {
     myLastRevealTimestamp?: number;
     currentlyRevealing: boolean;
     revealCooldownTime: number;
+}
+export interface ClaimCountdownInfo {
+    myLastClaimTimestamp?: number;
+    currentlyClaiming: boolean;
+    claimCooldownTime: number;
 }

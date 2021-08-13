@@ -1,7 +1,7 @@
+import { DiagnosticUpdater, Planet, WorldCoords } from "@darkforest_eth/types";
 import GameUIManager from "../../Backend/GameLogic/GameUIManager";
 import { CanvasCoords } from "../../Backend/Utils/Coordinates";
-import { ExploredChunkData } from "../../_types/global/GlobalTypes";
-import { WorldCoords, Planet } from "@darkforest_eth/types";
+import { Chunk } from "../../_types/global/GlobalTypes";
 import { AnimationManager } from "./ViewportAnimation";
 export declare const getDefaultScroll: () => number;
 declare type ViewportData = {
@@ -23,14 +23,15 @@ declare class Viewport {
     mousedownCoords: CanvasCoords | undefined;
     velocity: WorldCoords | undefined;
     momentum: boolean;
-    shouldFling: boolean;
     mouseSensitivity: number;
     intervalId: ReturnType<typeof setTimeout>;
     frameRequestId: number;
+    diagnosticUpdater?: DiagnosticUpdater;
     scale: number;
     isSending: boolean;
     animationManager: AnimationManager;
     constructor(gameUIManager: GameUIManager, centerWorldCoords: WorldCoords, widthInWorldUnits: number, viewportWidth: number, viewportHeight: number, canvas: HTMLCanvasElement);
+    setDiagnosticUpdater(diagnosticUpdater: DiagnosticUpdater): void;
     onSendInit(): void;
     onSendComplete(): void;
     get minWorldWidth(): number;
@@ -39,6 +40,10 @@ declare class Viewport {
         x: number;
         y: number;
     };
+    getBottomBound(): number;
+    getLeftBound(): number;
+    getTopBound(): number;
+    getRightBound(): number;
     getViewportWorldWidth(): number;
     getViewportWorldHeight(): number;
     setMouseSensitivty(mouseSensitivity: number): void;
@@ -50,18 +55,15 @@ declare class Viewport {
     getStorage(): ViewportData | undefined;
     setStorage(): void;
     setData(data: ViewportData): void;
-    centerPlanetAnimated(planet: Planet | undefined): void;
     centerPlanet(planet: Planet | undefined): void;
-    zoomPlanet(planet: Planet | undefined): void;
+    zoomPlanet(planet?: Planet, radii?: number): void;
     centerCoords(coords: WorldCoords): void;
-    centerChunk(chunk: ExploredChunkData): void;
+    centerChunk(chunk: Chunk): void;
     zoomIn(): void;
     zoomOut(): void;
     onMouseDown(canvasCoords: CanvasCoords): void;
     onMouseMove(canvasCoords: CanvasCoords): void;
     onMouseUp(canvasCoords: CanvasCoords): void;
-    setFling(fling: boolean): void;
-    loop(): void;
     onMouseOut(): void;
     onScroll(deltaY: number, forceZoom?: boolean): void;
     onWindowResize(): void;
@@ -75,10 +77,10 @@ declare class Viewport {
     canvasToWorldY(y: number): number;
     isInOrAroundViewport(coords: WorldCoords): boolean;
     isInViewport(coords: WorldCoords): boolean;
-    intersectsViewport(chunk: ExploredChunkData): boolean;
+    intersectsViewport(chunk: Chunk): boolean;
     isValidWorldWidth(width: number): boolean;
     setWorldWidth(width: number): void;
     setWorldHeight(height: number): void;
-    getDetailLevel(): number;
+    updateDiagnostics(): void;
 }
 export default Viewport;

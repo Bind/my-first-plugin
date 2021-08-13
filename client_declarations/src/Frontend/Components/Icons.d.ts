@@ -1,7 +1,11 @@
 import { Planet } from '@darkforest_eth/types';
 import { StatIdx } from '../../_types/global/GlobalTypes';
-export declare const SilverIcon: () => JSX.Element;
-export declare const SilverGrowthIcon: () => JSX.Element;
+export declare const SilverIcon: ({ color }: {
+    color?: string | undefined;
+}) => JSX.Element;
+export declare const SilverGrowthIcon: ({ color }: {
+    color?: string | undefined;
+}) => JSX.Element;
 export declare const EnergyGrowthIcon: ({ color }: {
     color?: string | undefined;
 }) => JSX.Element;
@@ -76,3 +80,43 @@ export declare const BranchIcon: ({ branch }: {
 export declare const StatIcon: ({ stat }: {
     stat: StatIdx;
 }) => JSX.Element;
+/**
+ Allow for tweaking the size of an icon based on the context.
+ Biome & Spacetype Notifications should fill the notification box
+ Others should be 3/4's the size and centered
+*/
+interface AlertIcon {
+    height?: string;
+    width?: string;
+}
+export declare const Quasar: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundRuins: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundSpacetimeRip: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundSilver: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundTradingPost: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundSpace: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundDeepSpace: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundDeadSpace: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundPirates: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundComet: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const ArtifactFound: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const ArtifactProspected: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundOcean: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundForest: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundGrassland: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundTundra: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundSwamp: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundDesert: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundIce: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundWasteland: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundLava: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const FoundCorrupted: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const PlanetAttacked: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const PlanetLost: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const PlanetConquered: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const MetPlayer: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const TxAccepted: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const TxConfirmed: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const TxInitialized: ({ height, width }: AlertIcon) => JSX.Element;
+export declare const TxDeclined: ({ height, width }: AlertIcon) => JSX.Element;
+export {};

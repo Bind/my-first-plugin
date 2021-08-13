@@ -1,10 +1,10 @@
 import { Artifact, WorldCoords } from "@darkforest_eth/types";
+import { RenderedArtifact } from "../../../../Backend/GameLogic/ArtifactUtils";
 import { CanvasCoords } from "../../../../Backend/Utils/Coordinates";
+import { RGBVec } from "../EngineTypes";
 import { SPRITE_PROGRAM_DEFINITION } from "../Programs/SpriteProgram";
 import { GenericRenderer } from "../WebGL/GenericRenderer";
 import { WebGLManager } from "../WebGL/WebGLManager";
-import { RGBVec } from "../EngineTypes";
-import { RenderedArtifact } from "../../../../Backend/GameLogic/ArtifactUtils";
 export declare class SpriteRenderer extends GenericRenderer<typeof SPRITE_PROGRAM_DEFINITION> {
     posBuffer: number[];
     texBuffer: number[];

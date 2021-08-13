@@ -1,2 +1,4 @@
-export declare const TOP_BAR_HEIGHT = "2.5em";
-export declare function TopBar(): JSX.Element;
+import { ModalHook } from './ModalPane';
+export declare function TopBar({ twitterVerifyHook }: {
+    twitterVerifyHook: ModalHook;
+}): JSX.Element;

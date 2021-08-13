@@ -1,5 +1,4 @@
 import { ModalHook } from '../Views/ModalPane';
-export declare function PlayerArtifactsPane({ hook, artifactDetailsHook, }: {
+export declare function PlayerArtifactsPane({ hook }: {
     hook: ModalHook;
-    artifactDetailsHook: ModalHook;
 }): JSX.Element;

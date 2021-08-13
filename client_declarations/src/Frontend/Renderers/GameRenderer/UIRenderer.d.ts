@@ -1,6 +1,6 @@
 import { Planet, WorldCoords } from "@darkforest_eth/types";
-import Renderer from "./Renderer";
 import { RGBVec } from "./EngineTypes";
+import Renderer from "./Renderer";
 export declare class UIRenderer {
     renderer: Renderer;
     constructor(renderer: Renderer);

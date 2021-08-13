@@ -6,4 +6,5 @@
 export declare class Wrapper<T> {
     readonly value: T;
     constructor(value: T);
+    or(wrapper: Wrapper<T>): Wrapper<T>;
 }

@@ -3,7 +3,7 @@ export declare type Hat = {
     topLayer: Array<string>;
     bottomLayer: Array<string>;
 };
-export declare enum HatType {
+export declare const enum HatType {
     GraduationCap = "GraduationCap",
     PartyHat = "PartyHat",
     Fish = "Fish",

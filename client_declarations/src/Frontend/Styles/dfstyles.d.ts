@@ -1,6 +1,7 @@
-import { SpaceType } from '@darkforest_eth/types';
 export declare const ARTIFACT_ROW_H = 48;
-export declare const SPACE_TYPE_COLORS: Record<SpaceType, string>;
+export declare const SPACE_TYPE_COLORS: {
+    readonly [x: number]: "rgb(0, 20.4, 81.6)" | "rgb(0, 5.4, 43.35)" | "rgb(2.04, 0, 6.12)" | "rgb(0, 37, 1)";
+};
 declare const dfstyles: {
     colors: {
         text: string;
@@ -13,9 +14,16 @@ declare const dfstyles: {
         backgroundlight: string;
         backgroundlighter: string;
         dfblue: string;
+        border: string;
+        borderDark: string;
+        borderDarker: string;
         dfgreen: string;
+        dfgreendark: string;
+        dfgreenlight: string;
         dfred: string;
         dfyellow: string;
+        dfpurple: string;
+        dfwhite: string;
         artifactBackground: string;
         icons: {
             twitter: string;
@@ -63,5 +71,14 @@ declare const dfstyles: {
     prefabs: {
         noselect: import("styled-components").FlattenSimpleInterpolation;
     };
+};
+export declare const snips: {
+    bigPadding: import("styled-components").FlattenSimpleInterpolation;
+    defaultModalWidth: import("styled-components").FlattenSimpleInterpolation;
+    defaultBackground: string;
+    roundedBorders: string;
+    roundedBordersWithEdge: import("styled-components").FlattenSimpleInterpolation;
+    absoluteTopLeft: import("styled-components").FlattenSimpleInterpolation;
+    pane: string;
 };
 export default dfstyles;

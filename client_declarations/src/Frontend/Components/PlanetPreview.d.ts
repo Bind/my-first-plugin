@@ -1,10 +1,8 @@
 import { Planet } from '@darkforest_eth/types';
-export declare function PlanetPreviewImage({ planet, res }: {
+export declare function PlanetPreviewImage({ planet }: {
     planet: Planet | undefined;
-    res: number;
 }): JSX.Element;
-export declare function PlanetPreview({ planet, size, res, }: {
+export declare function PlanetPreview({ planet, size }: {
     planet: Planet | undefined;
     size: string;
-    res: number;
 }): JSX.Element;

@@ -1,5 +1,5 @@
+import { ArtifactRarity, ArtifactType, Conversation } from '@darkforest_eth/types';
 import React from 'react';
-import { Conversation, ArtifactType, ArtifactRarity } from '@darkforest_eth/types';
 import { TerminalHandle } from '../../Frontend/Views/Terminal';
 export declare class ConversationManager {
     private terminal;

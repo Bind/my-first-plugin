@@ -1,5 +1,5 @@
-import { LocationId, WorldLocation } from "@darkforest_eth/types";
-import { QuadTree } from "js-quadtree";
+import { LocationId, WorldCoords, WorldLocation } from "@darkforest_eth/types";
+import { Point, QuadTree } from "js-quadtree";
 import { Radii } from "./ViewportEntities";
 /**
  * Data structure which allows us to efficiently query for "which planets between level X and X + n
@@ -15,9 +15,14 @@ export declare class LayeredMap {
      */
     insertPlanet(location: WorldLocation, planetLevel: number): void;
     /**
+     * Gets all the planets within the given world radius of a world location.
+     */
+    getPlanetsInCircle(coords: WorldCoords, worldRadius: number): LocationId[];
+    /**
      * Gets the ids of all the planets that are both within the given bounding box (defined by its bottom
      * left coordinate, width, and height) in the world and of a level that was passed in via the
      * `planetLevels` parameter.
      */
     getPlanets(worldX: number, worldY: number, worldWidth: number, worldHeight: number, planetLevels: number[], planetLevelToRadii: Map<number, Radii>): LocationId[];
+    getPointLocationId(point: Point): LocationId;
 }

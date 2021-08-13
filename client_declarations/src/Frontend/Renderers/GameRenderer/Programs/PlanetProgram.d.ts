@@ -1,5 +1,5 @@
 import { Planet } from '@darkforest_eth/types';
-import { UniformType, AttribType } from '../EngineTypes';
+import { AttribType, UniformType } from '../EngineTypes';
 export declare const PLANET_PROGRAM_DEFINITION: {
     uniforms: {
         matrix: {

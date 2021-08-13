@@ -1,7 +1,8 @@
 import { Artifact } from '@darkforest_eth/types';
 import React from 'react';
-export declare function ArtifactLink({ artifact, setDetailsOpen, children, }: {
+import { ModalHandle } from './ModalPane';
+export declare function ArtifactLink({ modal, children, artifact, }: {
+    modal: ModalHandle;
     artifact: Artifact;
-    setDetailsOpen: (open: boolean) => void;
-    children: React.ReactNode;
+    children: React.ReactNode | React.ReactNode[];
 }): JSX.Element;

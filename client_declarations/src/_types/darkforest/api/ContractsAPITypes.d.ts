@@ -1,12 +1,12 @@
-import { UpgradeBranches } from '@darkforest_eth/types';
+import { ArtifactPointValues, UpgradeBranches } from '@darkforest_eth/types';
 import { BigNumber as EthersBN } from 'ethers';
-export declare enum ZKArgIdx {
+export declare const enum ZKArgIdx {
     PROOF_A = 0,
     PROOF_B = 1,
     PROOF_C = 2,
     DATA = 3
 }
-export declare enum InitArgIdxs {
+export declare const enum InitArgIdxs {
     LOCATION_ID = 0,
     PERLIN = 1,
     RADIUS = 2,
@@ -16,7 +16,7 @@ export declare enum InitArgIdxs {
     PERLIN_MIRROR_X = 6,
     PERLIN_MIRROR_Y = 7
 }
-export declare enum MoveArgIdxs {
+export declare const enum MoveArgIdxs {
     FROM_ID = 0,
     TO_ID = 1,
     TO_PERLIN = 2,
@@ -31,11 +31,11 @@ export declare enum MoveArgIdxs {
     SILVER_SENT = 11,
     ARTIFACT_SENT = 12
 }
-export declare enum UpgradeArgIdxs {
+export declare const enum UpgradeArgIdxs {
     LOCATION_ID = 0,
     UPGRADE_BRANCH = 1
 }
-export declare enum ContractEvent {
+export declare const enum ContractEvent {
     PlayerInitialized = "PlayerInitialized",
     ArrivalQueued = "ArrivalQueued",
     PlanetUpgraded = "PlanetUpgraded",
@@ -48,9 +48,10 @@ export declare enum ContractEvent {
     ArtifactActivated = "ArtifactActivated",
     ArtifactDeactivated = "ArtifactDeactivated",
     PlanetSilverWithdrawn = "PlanetSilverWithdrawn",
-    ChangedGPTCreditPrice = "ChangedCreditPrice"
+    ChangedGPTCreditPrice = "ChangedCreditPrice",
+    LocationClaimed = "LocationClaimed"
 }
-export declare enum ContractsAPIEvent {
+export declare const enum ContractsAPIEvent {
     PlayerUpdate = "PlayerUpdate",
     PlanetUpdate = "PlanetUpdate",
     ArrivalQueued = "ArrivalQueued",
@@ -62,29 +63,91 @@ export declare enum ContractsAPIEvent {
     TxSubmitted = "TxSubmitted",
     TxConfirmed = "TxConfirmed",
     TxReverted = "TxReverted",
-    PlanetTransferred = "PlanetTransferred"
+    PlanetTransferred = "PlanetTransferred",
+    PlanetClaimed = "PlanetClaimed"
 }
 export declare type UpgradeArgs = [string, string];
-export declare type MoveArgs = [[string, string], // proofA
-[[string, string], [string, string]], [string, string], // proofC
-[string, // from locationID (BigInt)
-string, // to locationID (BigInt)
-string, // perlin at to
-string, // radius at to
-string, // distMax
-string, // planetHashKey
-string, // spaceTypeKey
-string, // perlin lengthscale
-string, // perlin xmirror (1 true, 0 false)
-string, // perlin ymirror (1 true, 0 false)
-string, // ships sent
-string, // silver sent
-string]];
+export declare type MoveArgs = [
+    [
+        string,
+        string
+    ],
+    [
+        [
+            string,
+            string
+        ],
+        [
+            string,
+            string
+        ]
+    ],
+    [
+        string,
+        string
+    ],
+    [
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string
+    ]
+];
+export declare type ClaimArgs = [
+    [
+        string,
+        string
+    ],
+    [
+        [string, string],
+        [string, string]
+    ],
+    [
+        string,
+        string
+    ],
+    [
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string,
+        string
+    ]
+];
 export declare type DepositArtifactArgs = [string, string];
 export declare type WithdrawArtifactArgs = [string, string];
 export declare type PlanetTypeWeights = [number, number, number, number, number];
-export declare type PlanetTypeWeightsByLevel = [PlanetTypeWeights, PlanetTypeWeights, PlanetTypeWeights, PlanetTypeWeights, PlanetTypeWeights, PlanetTypeWeights, PlanetTypeWeights, PlanetTypeWeights, PlanetTypeWeights, PlanetTypeWeights];
-export declare type PlanetTypeWeightsBySpaceType = [PlanetTypeWeightsByLevel, PlanetTypeWeightsByLevel, PlanetTypeWeightsByLevel, PlanetTypeWeightsByLevel];
+export declare type PlanetTypeWeightsByLevel = [
+    PlanetTypeWeights,
+    PlanetTypeWeights,
+    PlanetTypeWeights,
+    PlanetTypeWeights,
+    PlanetTypeWeights,
+    PlanetTypeWeights,
+    PlanetTypeWeights,
+    PlanetTypeWeights,
+    PlanetTypeWeights,
+    PlanetTypeWeights
+];
+export declare type PlanetTypeWeightsBySpaceType = [
+    PlanetTypeWeightsByLevel,
+    PlanetTypeWeightsByLevel,
+    PlanetTypeWeightsByLevel,
+    PlanetTypeWeightsByLevel
+];
 export interface ContractConstants {
     DISABLE_ZK_CHECKS: boolean;
     PLANETHASH_KEY: number;
@@ -93,6 +156,7 @@ export interface ContractConstants {
     PERLIN_LENGTH_SCALE: number;
     PERLIN_MIRROR_X: boolean;
     PERLIN_MIRROR_Y: boolean;
+    TOKEN_MINT_END_SECONDS: number;
     MAX_NATURAL_PLANET_LEVEL: number;
     TIME_FACTOR_HUNDREDTHS: number;
     /**
@@ -106,12 +170,15 @@ export interface ContractConstants {
     PERLIN_THRESHOLD_3: number;
     INIT_PERLIN_MIN: number;
     INIT_PERLIN_MAX: number;
+    SPAWN_RIM_AREA: number;
     BIOME_THRESHOLD_1: number;
     BIOME_THRESHOLD_2: number;
     PLANET_RARITY: number;
     PLANET_TYPE_WEIGHTS: PlanetTypeWeightsBySpaceType;
+    ARTIFACT_POINT_VALUES: ArtifactPointValues;
     PHOTOID_ACTIVATION_DELAY: number;
     LOCATION_REVEAL_COOLDOWN: number;
+    CLAIM_PLANET_COOLDOWN: number;
     defaultPopulationCap: number[];
     defaultPopulationGrowth: number[];
     defaultSilverCap: number[];
@@ -127,6 +194,6 @@ export interface ContractConstants {
 export declare type ClientMockchainData = null | undefined | number | string | boolean | EthersBN | ClientMockchainData[] | {
     [key in string | number]: ClientMockchainData;
 };
-export declare enum PlanetEventType {
+export declare const enum PlanetEventType {
     ARRIVAL = 0
 }

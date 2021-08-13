@@ -1,5 +1,5 @@
-import React from 'react';
 import { Artifact, Conversation } from '@darkforest_eth/types';
+import React from 'react';
 import { TerminalHandle } from '../../Frontend/Views/Terminal';
 import GameUIManager from './GameUIManager';
 export declare class PaidConversationManager {

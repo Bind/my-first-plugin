@@ -1,4 +1,4 @@
-import { Biome, ArtifactRarity, Planet, PlanetLevel, Artifact, ArtifactType, ArtifactId } from '@darkforest_eth/types';
+import { Artifact, ArtifactId, ArtifactRarity, ArtifactType, Biome, Planet, PlanetLevel } from '@darkforest_eth/types';
 export declare const RelicsList: ArtifactType[];
 export declare function isRelic(type: ArtifactType): boolean;
 export declare function isBasic(type: ArtifactType): boolean;
@@ -23,7 +23,7 @@ export declare const rarityName: (rarity: ArtifactRarity) => string;
 export declare const rarityNameFromArtifact: (a: Artifact) => string;
 export declare function artifactBiomeName(artifact: Artifact): string;
 export declare const levelFromRarity: (rarity: ArtifactRarity) => PlanetLevel;
-export declare enum ArtifactFileColor {
+export declare const enum ArtifactFileColor {
     BLUE = 0,
     APP_BACKGROUND = 1
 }

@@ -1,25 +1,26 @@
 /// <reference types="react" />
 /// <reference types="node" />
-import { EventEmitter } from "events";
+import { Monomitter, Subscription } from "@darkforest_eth/events";
+import { EthConnection } from "@darkforest_eth/network";
+import { Artifact, ArtifactId, ClaimedCoords, ClaimedLocation, Conversation, Diagnostics, EthAddress, LocatablePlanet, LocationId, Planet, PlanetLevel, PlanetMessageType, Player, QueuedArrival, RevealedCoords, RevealedLocation, SignedMessage, SpaceType, SubmittedTx, TxIntent, UnconfirmedActivateArtifact, UnconfirmedMove, UnconfirmedUpgrade, Upgrade, VoyageId, WorldCoords, WorldLocation } from "@darkforest_eth/types";
 import { BigInteger } from "big-integer";
-import { ExploredChunkData, Rectangle, HashConfig, Wormhole, RevealCountdownInfo } from "../../_types/global/GlobalTypes";
-import PersistentChunkStore from "../Storage/PersistentChunkStore";
-import ContractsAPI from "./ContractsAPI";
-import MinerManager from "../Miner/MinerManager";
-import { ContractConstants } from "../../_types/darkforest/api/ContractsAPITypes";
-import { GameObjects } from "./GameObjects";
-import { Contract, ContractInterface } from "ethers";
-import { EthAddress, Player, ArtifactId, VoyageId, LocationId, WorldLocation, WorldCoords, Conversation, PlanetLevel, SpaceType, QueuedArrival, Upgrade, Planet, Artifact, UnconfirmedUpgrade, TxIntent, UnconfirmedMove, UnconfirmedActivateArtifact, RevealedCoords, LocatablePlanet, RevealedLocation } from "@darkforest_eth/types";
+import { BigNumber, Contract, ContractInterface } from "ethers";
+import { EventEmitter } from "events";
 import NotificationManager from "../../Frontend/Game/NotificationManager";
-import { Monomitter } from "../../Frontend/Utils/Monomitter";
+import { Diff } from "../../Frontend/Utils/EmitterUtils";
 import UIEmitter from "../../Frontend/Utils/UIEmitter";
 import { TerminalHandle } from "../../Frontend/Views/Terminal";
+import { ContractConstants } from "../../_types/darkforest/api/ContractsAPITypes";
+import { AddressTwitterMap } from "../../_types/darkforest/api/UtilityServerAPITypes";
+import { Chunk, ClaimCountdownInfo, HashConfig, Rectangle, RevealCountdownInfo, Wormhole } from "../../_types/global/GlobalTypes";
+import MinerManager from "../Miner/MinerManager";
 import { MiningPattern, SpiralPattern, SwissCheesePattern } from "../Miner/MiningPatterns";
-import EthConnection from "../Network/EthConnection";
 import { SerializedPlugin } from "../Plugins/SerializedPlugin";
 import { ProcgenUtils } from "../Procedural/ProcgenUtils";
+import PersistentChunkStore from "../Storage/PersistentChunkStore";
 import SnarkArgsHelper from "../Utils/SnarkArgsHelper";
-import UIStateStorageManager, { UIDataKey } from "../Storage/UIStateStorageManager";
+import { ContractsAPI } from "./ContractsAPI";
+import { GameObjects } from "./GameObjects";
 import { Radii } from "./ViewportEntities";
 export declare enum GameManagerEvent {
     PlanetUpdate = "PlanetUpdate",
@@ -30,44 +31,190 @@ export declare enum GameManagerEvent {
     Moved = "Moved"
 }
 declare class GameManager extends EventEmitter {
-    readonly terminal: React.MutableRefObject<TerminalHandle | undefined>;
-    readonly account: EthAddress | undefined;
-    readonly players: Map<string, Player>;
-    readonly contractsAPI: ContractsAPI;
-    readonly persistentChunkStore: PersistentChunkStore;
-    readonly snarkHelper: SnarkArgsHelper;
+    /**
+     * This variable contains the internal state of objects that live in the game world.
+     */
     readonly entityStore: GameObjects;
+    /**
+     * Kind of hacky, but we store a reference to the terminal that the player sees when the initially
+     * load into the game. This is the same exact terminal that appears inside the collapsable right
+     * bar of the game.
+     */
+    readonly terminal: React.MutableRefObject<TerminalHandle | undefined>;
+    /**
+     * The ethereum address of the player who is currently logged in. We support 'no account',
+     * represented by `undefined` in the case when you want to simply load the game state from the
+     * contract and view it without be able to make any moves.
+     */
+    readonly account: EthAddress | undefined;
+    /**
+     * Map from ethereum addresses to player objects. This isn't stored in {@link GameObjects},
+     * because it's not techincally an entity that exists in the world. A player just controls planets
+     * and artifacts that do exist in the world.
+     *
+     * @todo move this into a new `Players` class.
+     */
+    readonly players: Map<string, Player>;
+    /**
+     * Allows us to make contract calls, and execute transactions. Be careful about how you use this
+     * guy. You don't want to cause your client to send an excessive amount of traffic to whatever
+     * node you're connected to.
+     *
+     * Interacting with the blockchain isn't free, and we need to be mindful about about the way our
+     * application interacts with the blockchain. The current rate limiting strategy consists of three
+     * points:
+     *
+     * - data that needs to be fetched often should be fetched in bulk.
+     * - rate limit smart contract calls (reads from the blockchain), implemented by
+     *   {@link ContractCaller} and transactions (writes to the blockchain on behalf of the player),
+     *   implemented by {@link TxExecutor} via two separately tuned {@link ThrottledConcurrentQueue}s.
+     */
+    readonly contractsAPI: ContractsAPI;
+    /**
+     * An object that syncs any newly added or deleted chunks to the player's IndexedDB.
+     *
+     * @todo it also persists other game data to IndexedDB. This class needs to be renamed `GameSaver`
+     * or something like that.
+     */
+    readonly persistentChunkStore: PersistentChunkStore;
+    /**
+     * Responsible for generating snark proofs.
+     */
+    readonly snarkHelper: SnarkArgsHelper;
+    /**
+     * In debug builds of the game, we can connect to a set of contracts deployed to a local
+     * blockchain, which are tweaked to not verify planet hashes, meaning we can use a faster hash
+     * function with similar properties to mimc. This allows us to mine the map faster in debug mode.
+     *
+     * @todo move this into a separate `GameConfiguration` class.
+     */
     readonly useMockHash: boolean;
+    /**
+     * Game parameters set by the contract. Stuff like perlin keys, which are important for mining the
+     * correct universe, or the time multiplier, which allows us to tune how quickly voyages go.
+     *
+     * @todo move this into a separate `GameConfiguration` class.
+     */
     readonly contractConstants: ContractConstants;
+    /**
+     * @todo change this to the correct timestamp each round.
+     */
     readonly endTimeSeconds: number;
+    /**
+     * An interface to the blockchain that is a little bit lower-level than {@link ContractsAPI}. It
+     * allows us to do basic operations such as wait for a transaction to complete, check the player's
+     * address and balance, etc.
+     */
     readonly ethConnection: EthConnection;
+    /**
+     * Each round we change the hash configuration of the game. The hash configuration is download
+     * from the blockchain, and essentially acts as a salt, permuting the universe into a unique
+     * configuration for each new round.
+     *
+     * @todo deduplicate this and `useMockHash` somehow.
+     */
     readonly hashConfig: HashConfig;
+    /**
+     * The aforementioned hash function. In debug mode where `DISABLE_ZK_CHECKS` is on, we use a
+     * faster hash function. Othewise, in production mode, use MiMC hash (https://byt3bit.github.io/primesym/).
+     */
     readonly planetHashMimc: (...inputs: number[]) => BigInteger;
-    readonly uiStateStorageManager: UIStateStorageManager;
-    balance: number;
-    myBalance$: Monomitter<number>;
-    balanceInterval: ReturnType<typeof setInterval>;
+    /**
+     * Whenever we refresh the players twitter accounts or scores, we publish an event here.
+     */
+    readonly playersUpdated$: Monomitter<void>;
+    /**
+     * Handle to an interval that periodically uploads diagnostic information from this client.
+     */
+    diagnosticsInterval: ReturnType<typeof setInterval>;
+    /**
+     * Handle to an interval that periodically refreshes some information about the player from the
+     * blockchain.
+     *
+     * @todo move this into a new `PlayerState` class.
+     */
+    playerInterval: ReturnType<typeof setInterval>;
+    /**
+     * Handle to an interval that periodically refreshes the scoreboard from our webserver.
+     */
+    scoreboardInterval: ReturnType<typeof setInterval>;
+    /**
+     * Manages the process of mining new space territory.
+     */
     minerManager?: MinerManager;
+    /**
+     * Continuously updated value representing the total hashes per second that the game is currently
+     * mining the universe at.
+     *
+     * @todo keep this in {@link MinerManager}
+     */
     hashRate: number;
+    /**
+     * The spawn location of the current player.
+     *
+     * @todo, make this smarter somehow. It's really annoying to have to import world coordinates, and
+     * get them wrong or something. Maybe we need to mark a planet, once it's been initialized
+     * contract-side, as the homeworld of the user who initialized on it. That way, when you import a
+     * new account into the game, and you import map data that contains your home planet, the client
+     * would be able to automatically detect which planet is the player's home planet.
+     *
+     * @todo move this into a new `PlayerState` class.
+     */
     homeLocation: WorldLocation | undefined;
+    /**
+     * Sometimes the universe gets bigger... Sometimes it doesn't.
+     *
+     * @todo move this into a new `GameConfiguration` class.
+     */
     worldRadius: number;
+    /**
+     * Price of a single gpt credit, which buys you a single interaction with the GPT-powered AI
+     * Artifact Chat Bots.
+     *
+     * @todo move this into a new `GameConfiguration` class.
+     */
     gptCreditPriceEther: number;
+    /**
+     * Whenever the price of single GPT credit changes, we emit that event here.
+     */
     gptCreditPriceEtherEmitter$: Monomitter<number>;
+    /**
+     * The total amount of GPT credits that belong to the current player.
+     *
+     * @todo move this into a new `PlayerState` class.
+     */
     myGPTCredits: number;
+    /**
+     * Whenever the amount of the GPT credits that this player owns changes, we publish an event here.
+     *
+     * @todo move this into a new `PlayerState` class.
+     */
     myGPTCredits$: Monomitter<number>;
+    /**
+     * Diagnostic information about the game.
+     */
+    diagnostics: Diagnostics;
+    /**
+     * Subscription to act on setting changes
+     */
+    settingsSubscription: Subscription | undefined;
     get planetRarity(): number;
-    constructor(terminal: React.MutableRefObject<TerminalHandle | undefined>, account: EthAddress | undefined, balance: number, players: Map<string, Player>, touchedPlanets: Map<LocationId, Planet>, allTouchedPlanetIds: Set<LocationId>, revealedCoords: Map<LocationId, RevealedCoords>, worldRadius: number, unprocessedArrivals: Map<VoyageId, QueuedArrival>, unprocessedPlanetArrivalIds: Map<LocationId, VoyageId[]>, contractsAPI: ContractsAPI, contractConstants: ContractConstants, persistentChunkStore: PersistentChunkStore, snarkHelper: SnarkArgsHelper, homeLocation: WorldLocation | undefined, useMockHash: boolean, artifacts: Map<ArtifactId, Artifact>, ethConnection: EthConnection, gptCreditPriceEther: number, myGPTCredits: number, uiStateStorageManager: UIStateStorageManager);
+    constructor(terminal: React.MutableRefObject<TerminalHandle | undefined>, account: EthAddress | undefined, players: Map<string, Player>, touchedPlanets: Map<LocationId, Planet>, allTouchedPlanetIds: Set<LocationId>, revealedCoords: Map<LocationId, RevealedCoords>, claimedCoords: Map<LocationId, ClaimedCoords>, worldRadius: number, unprocessedArrivals: Map<VoyageId, QueuedArrival>, unprocessedPlanetArrivalIds: Map<LocationId, VoyageId[]>, contractsAPI: ContractsAPI, contractConstants: ContractConstants, persistentChunkStore: PersistentChunkStore, snarkHelper: SnarkArgsHelper, homeLocation: WorldLocation | undefined, useMockHash: boolean, artifacts: Map<ArtifactId, Artifact>, ethConnection: EthConnection, gptCreditPriceEther: number, myGPTCredits: number);
+    uploadDiagnostics(): Promise<void>;
+    refreshScoreboard(): Promise<void>;
     getEthConnection(): EthConnection;
     destroy(): void;
     static create(ethConnection: EthConnection, terminal: React.MutableRefObject<TerminalHandle | undefined>): Promise<GameManager>;
     hardRefreshPlayer(address: EthAddress): Promise<void>;
+    softRefreshPlanet(planetId: LocationId): Promise<void>;
     hardRefreshPlanet(planetId: LocationId): Promise<void>;
     bulkHardRefreshPlanets(planetIds: LocationId[]): Promise<void>;
     hardRefreshArtifact(artifactId: ArtifactId): Promise<void>;
     refreshMyGPTCredits(): Promise<void>;
+    onTxSubmit(unminedTx: SubmittedTx): void;
+    onTxConfirmed(unminedTx: SubmittedTx): void;
+    onTxReverted(unminedTx: SubmittedTx): void;
     onTxIntentFail(txIntent: TxIntent, e: Error): void;
-    setUIDataItem(key: UIDataKey, value: number | boolean): void;
-    getUIDataItem(key: UIDataKey): number | boolean;
     getGptCreditPriceEmitter(): Monomitter<number>;
     getGptCreditBalanceEmitter(): Monomitter<number>;
     /**
@@ -89,6 +236,10 @@ declare class GameManager extends EventEmitter {
      * in seconds from the epoch.
      */
     getEndTimeSeconds(): number;
+    /**
+     * Dark Forest tokens can only be minted up to a certain time - get this time measured in seconds from epoch.
+     */
+    getTokenMintEndTimeSeconds(): number;
     /**
      * Gets the rarity of planets in the universe
      */
@@ -114,16 +265,25 @@ declare class GameManager extends EventEmitter {
      */
     getAllPlayers(): Player[];
     /**
+     * Gets either the given player, or if no address was provided, gets the player that is logged
+     * this client.
+     */
+    getPlayer(address?: EthAddress): Player | undefined;
+    /**
      * Gets all the map chunks that this client is aware of. Chunks may have come from
      * mining, or from importing map data.
      */
-    getExploredChunks(): Iterable<ExploredChunkData>;
+    getExploredChunks(): Iterable<Chunk>;
     /**
      * Gets the ids of all the planets that are both within the given bounding box (defined by its bottom
      * left coordinate, width, and height) in the world and of a level that was passed in via the
      * `planetLevels` parameter.
      */
     getPlanetsInWorldRectangle(worldX: number, worldY: number, worldWidth: number, worldHeight: number, levels: number[], planetLevelToRadii: Map<number, Radii>, updateIfStale?: boolean): LocatablePlanet[];
+    /**
+     * Returns whether or not the current round has ended.
+     */
+    isRoundOver(): boolean;
     /**
      * Gets the radius of the playable area of the universe.
      */
@@ -144,8 +304,8 @@ declare class GameManager extends EventEmitter {
      * Gets the total amount of energy that lives on planets that the given player owns.
      */
     getEnergyOfPlayer(player: EthAddress): number;
-    getWithdrawnSilverOfPlayer(addr: EthAddress): number;
-    initMiningManager(homeCoords: WorldCoords): void;
+    getPlayerScore(addr: EthAddress): number | undefined;
+    initMiningManager(homeCoords: WorldCoords, cores?: number): void;
     /**
      * Sets the mining pattern of the miner. This kills the old miner and starts this one.
      */
@@ -180,6 +340,10 @@ declare class GameManager extends EventEmitter {
      */
     getNextRevealCountdownInfo(): RevealCountdownInfo;
     /**
+     * Returns info about the next time you can claim a Planet
+     */
+    getNextClaimCountdownInfo(): ClaimCountdownInfo;
+    /**
      * gets both deposited artifacts that are on planets i own as well as artifacts i own
      */
     getMyArtifacts(): Artifact[];
@@ -188,18 +352,23 @@ declare class GameManager extends EventEmitter {
      * location or if no planet exists at location. If the planet needs to be updated (because
      * some time has passed since we last updated the planet), then updates that planet first.
      */
-    getPlanetWithCoords(coords: WorldCoords): Planet | undefined;
+    getPlanetWithCoords(coords: WorldCoords): LocatablePlanet | undefined;
     /**
      * Gets the planet with the given hash. Returns undefined if the planet is neither in the contract
      * nor has been discovered locally. If the planet needs to be updated (because some time has
      * passed since we last updated the planet), then updates that planet first.
      */
     getPlanetWithId(planetId: LocationId | undefined): Planet | undefined;
+    /**
+     * Gets a list of planets in the client's memory with the given ids. If a planet with the given id
+     * doesn't exist, no entry for that planet will be returned in the result.
+     */
+    getPlanetsWithIds(planetId: LocationId[]): Planet[];
     getStalePlanetWithId(planetId: LocationId): Planet | undefined;
     /**
      * Get the score of the currently logged-in account.
      */
-    getMyScore(): number;
+    getMyScore(): number | undefined;
     /**
      * Gets the artifact with the given id. Null if no artifact with id exists.
      */
@@ -239,9 +408,13 @@ declare class GameManager extends EventEmitter {
      */
     getMyPlanets(): Planet[];
     /**
-     * Gets a map of all location IDs whose coords have been publicly revealed
+     * Gets a map of all location IDs whose coords have been publically revealed
      */
     getRevealedLocations(): Map<LocationId, RevealedLocation>;
+    /**
+     * Gets a map of all location IDs which have been claimed.
+     */
+    getClaimedLocations(): Map<LocationId, ClaimedLocation>;
     /**
      * Each coordinate lives in a particular type of space, determined by a smooth random
      * function called 'perlin noise.
@@ -252,20 +425,23 @@ declare class GameManager extends EventEmitter {
      */
     getHashesPerSec(): number;
     /**
-     * Signs the given twitter handle with the key of the current user. Used to
+     * Signs the given twitter handle with thekey of the current user. Used to
      * verify that the person who owns the Dark Forest account was the one that attempted
      * to link a twitter to their account.
      */
     getSignedTwitter(twitter: string): Promise<string>;
     /**
-     * Gets the key of the burner wallet used by this account.
+     * Gets thekey of the burner wallet used by this account.
      */
-    getPrivateKey(): string;
+    getPrivateKey(): string | undefined;
     /**
      * Gets the balance of the account
      */
-    getMyBalance(): number;
-    getMyBalanceEmitter(): Monomitter<number>;
+    getMyBalanceEth(): number;
+    /**
+     * Returns the monomitter which publishes events whenever the player's balance changes.
+     */
+    getMyBalance$(): Monomitter<BigNumber>;
     /**
      * Gets all moves that this client has queued to be uploaded to the contract, but
      * have not been successfully confirmed yet.
@@ -294,7 +470,7 @@ declare class GameManager extends EventEmitter {
      * Whether or not the given rectangle has been mined.
      */
     hasMinedChunk(chunkLocation: Rectangle): boolean;
-    getChunk(chunkFootprint: Rectangle): ExploredChunkData | undefined;
+    getChunk(chunkFootprint: Rectangle): Chunk | undefined;
     getChunkStore(): PersistentChunkStore;
     /**
      * The perlin value at each coordinate determines the space type. There are four space
@@ -313,16 +489,22 @@ declare class GameManager extends EventEmitter {
     stopExplore(): void;
     setRadius(worldRadius: number): void;
     refreshTwitters(): Promise<void>;
+    setPlayerTwitters(twitters: AddressTwitterMap): void;
     /**
-     * Once you have posted the verificatoin tweet - complete the twitter-account-linking
+     * Once you have posted the verification tweet - complete the twitter-account-linking
      * process by telling the Dark Forest webserver to look at that tweet.
      */
-    verifyTwitter(twitter: string): Promise<boolean>;
+    submitVerifyTwitter(twitter: string): Promise<boolean>;
     checkGameHasEnded(): boolean;
     /**
      * Gets the timestamp (ms) of the next time that we can broadcast the coordinates of a planet.
      */
     getNextBroadcastAvailableTimestamp(): number;
+    /**
+     * Gets the timestamp (ms) of the next time that we can claim a planet.
+     */
+    getNextClaimAvailableTimestamp(): number;
+    claimLocation(planetId: LocationId): GameManager;
     /**
      * Reveals a planet's location on-chain.
      */
@@ -342,7 +524,7 @@ declare class GameManager extends EventEmitter {
      * initialized the player on the contract.
      */
     addAccount(coords: WorldCoords): Promise<boolean>;
-    getRandomHomePlanetCoords(): Promise<WorldLocation>;
+    findRandomHomePlanet(): Promise<LocatablePlanet>;
     prospectPlanet(planetId: LocationId, bypassChecks?: boolean): Promise<this | undefined>;
     /**
      * Calls the contract to find an artifact on the given planet.
@@ -361,6 +543,46 @@ declare class GameManager extends EventEmitter {
     activateArtifact(locationId: LocationId, artifactId: ArtifactId, wormholeTo: LocationId | undefined, bypassChecks?: boolean): this;
     deactivateArtifact(locationId: LocationId, artifactId: ArtifactId, bypassChecks?: boolean): this | undefined;
     withdrawSilver(locationId: LocationId, amount: number, bypassChecks?: boolean): this | undefined;
+    /**
+     * We have two locations which planet state can live: on the server, and on the blockchain. We use
+     * the blockchain for the 'physics' of the universe, and the webserver for optional 'add-on'
+     * features, which are cryptographically secure, but live off-chain.
+     *
+     * This function loads the planet states which live on the server. Plays nicely with our
+     * notifications system and sets the appropriate loading state values on the planet.
+     */
+    refreshServerPlanetStates(planetIds: LocationId[]): Promise<void>;
+    /**
+     * If you are the owner of this planet, you can set an 'emoji' to hover above the planet.
+     * `emojiStr` must be a string that contains a single emoji, otherwise this function will throw an
+     * error.
+     *
+     * The emoji is stored off-chain in a postgres database. We verify planet ownership via a contract
+     * call from the webserver, and by verifying that the request to add (or remove) an emoji from a
+     * planet was signed by the owner.
+     */
+    setPlanetEmoji(locationId: LocationId, emojiStr: string): Promise<void>;
+    /**
+     * If you are the owner of this planet, you can delete the emoji that is hovering above the
+     * planet.
+     */
+    clearEmoji(locationId: LocationId): Promise<void>;
+    submitDisconnectTwitter(twitter: string): Promise<void>;
+    /**
+     * The planet emoji feature is built on top of a more general 'Planet Message' system, which
+     * allows players to upload pieces of data called 'Message's to planets that they own. Emojis are
+     * just one type of message. Their implementation leaves the door open to more off-chain data.
+     */
+    submitPlanetMessage(locationId: LocationId, type: PlanetMessageType, body: unknown): Promise<void>;
+    /**
+     * Returns a signed version of this message.
+     */
+    signMessage<T>(obj: T): Promise<SignedMessage<T>>;
+    /**
+     * Checks that a message signed by {@link GameManager#signMessage} was signed by the address that
+     * it claims it was signed by.
+     */
+    verifyMessage(message: SignedMessage<unknown>): Promise<boolean>;
     /**
      * Submits a transaction to the blockchain to move the given amount of resources from
      * the given planet to the given planet.
@@ -400,12 +622,12 @@ declare class GameManager extends EventEmitter {
      * as well as all of the planets contained in that chunk. Causes the client to load
      * all of the information about those planets from the blockchain.
      */
-    addNewChunk(chunk: ExploredChunkData): GameManager;
+    addNewChunk(chunk: Chunk): GameManager;
     /**
      * To add multiple chunks at once, use this function rather than `addNewChunk`, in order
      * to load all of the associated planet data in an efficient manner.
      */
-    bulkAddNewChunks(chunks: ExploredChunkData[]): Promise<void>;
+    bulkAddNewChunks(chunks: Chunk[]): Promise<void>;
     /**
      * Gets the maximuim distance that you can send your energy from the given planet,
      * using the given percentage of that planet's current silver.
@@ -413,7 +635,7 @@ declare class GameManager extends EventEmitter {
     getMaxMoveDist(planetId: LocationId, sendingPercent: number): number;
     /**
      * Gets the distance between two planets. Throws an exception if you don't
-     * know the location of either planet.
+     * know the location of either planet. Takes into account wormholes.
      */
     getDist(fromId: LocationId, toId: LocationId): number;
     /**
@@ -422,7 +644,7 @@ declare class GameManager extends EventEmitter {
     getDistCoords(fromCoords: WorldCoords, toCoords: WorldCoords): number;
     /**
      * Gets all the planets that you can reach with at least 1 energy from
-     * the given planet.
+     * the given planet. Does not take into account wormholes.
      */
     getPlanetsInRange(planetId: LocationId, sendingPercent: number): Planet[];
     /**
@@ -508,6 +730,42 @@ declare class GameManager extends EventEmitter {
     getArtifactUpdated$(): Monomitter<ArtifactId>;
     getMyPlanetsUpdated$(): Monomitter<Map<LocationId, Planet>>;
     getMyArtifactsUpdated$(): Monomitter<Map<ArtifactId, Artifact>>;
-    loadContract(contractAddress: string, contractABI: ContractInterface): Promise<Contract>;
+    /**
+     * Returns an instance of a `Contract` from the ethersjs library. This is the library we use to
+     * connect to the blockchain. For documentation about how `Contract` works, see:
+     * https://docs.ethers.io/v5/api/contract/contract/
+     *
+     * Also, registers your contract in the system to make calls against it and to reload it when
+     * necessary (such as the RPC endpoint changing).
+     */
+    loadContract<T extends Contract>(contractAddress: string, contractABI: ContractInterface): Promise<T>;
+    /**
+     * Gets a reference to the game's internal representation of the world state. This includes
+     * voyages, planets, artifacts, and active wormholes,
+     */
+    getGameObjects(): GameObjects;
+    /**
+     * Gets some diagnostic information about the game. Returns a copy, you can't modify it.
+     */
+    getDiagnostics(): Diagnostics;
+    /**
+     * Updates the diagnostic info of the game using the supplied function. Ideally, each spot in the
+     * codebase that would like to record a metric is able to update its specific metric in a
+     * convenient manner.
+     */
+    updateDiagnostics(updateFn: (d: Diagnostics) => void): void;
+    /**
+     * Listen for changes to a planet take action,
+     * eg.
+     * waitForPlanet("yourAsteroidId", ({current}) => current.silverCap / current.silver > 90)
+     * .then(() => {
+     *  // Send Silver to nearby planet
+     * })
+     *
+     * @param locationId A locationId to watch for updates
+     * @param predicate a function that accepts a Diff and should return a truth-y value, value will be passed to promise.resolve()
+     * @returns a promise that will resolve with results returned from the predicate function
+     */
+    waitForPlanet<T>(locationId: LocationId, predicate: ({ current, previous }: Diff<Planet>) => T | undefined): Promise<T>;
 }
 export default GameManager;

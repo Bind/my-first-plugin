@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { EventEmitter } from "events";
-export declare enum UIEmitterEvent {
+export declare const enum UIEmitterEvent {
     GamePlanetSelected = "GamePlanetSelected",
     CenterPlanet = "CenterPlanet",
     WindowResize = "WindowResize",

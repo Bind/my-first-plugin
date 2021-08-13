@@ -1,8 +1,9 @@
-import { VoyageId, QueuedArrival, LocationId, Artifact, Player, RevealedCoords, Planet } from "@darkforest_eth/types";
+import { Artifact, ClaimedCoords, LocationId, Planet, Player, QueuedArrival, RevealedCoords, VoyageId } from "@darkforest_eth/types";
 import { TerminalHandle } from "../../Frontend/Views/Terminal";
 import { ContractConstants } from "../../_types/darkforest/api/ContractsAPITypes";
+import { AddressTwitterMap } from "../../_types/darkforest/api/UtilityServerAPITypes";
 import PersistentChunkStore from "../Storage/PersistentChunkStore";
-import ContractsAPI from "./ContractsAPI";
+import { ContractsAPI } from "./ContractsAPI";
 export interface InitialGameState {
     contractConstants: ContractConstants;
     players: Map<string, Player>;
@@ -11,6 +12,7 @@ export interface InitialGameState {
     myGPTCredits: number;
     allTouchedPlanetIds: LocationId[];
     allRevealedCoords: RevealedCoords[];
+    allClaimedCoords: ClaimedCoords[];
     pendingMoves: QueuedArrival[];
     touchedAndLocatedPlanets: Map<LocationId, Planet>;
     artifactsOnVoyages: Artifact[];
@@ -19,8 +21,10 @@ export interface InitialGameState {
     loadedPlanets: LocationId[];
     balance: number;
     revealedCoordsMap: Map<LocationId, RevealedCoords>;
+    claimedCoordsMap: Map<LocationId, ClaimedCoords>;
     planetVoyageIdMap: Map<LocationId, VoyageId[]>;
     arrivals: Map<VoyageId, QueuedArrival>;
+    twitters: AddressTwitterMap;
 }
 export declare class InitialGameStateDownloader {
     terminal: TerminalHandle;

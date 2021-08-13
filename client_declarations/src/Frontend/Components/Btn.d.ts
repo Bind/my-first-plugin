@@ -1,10 +1,12 @@
 import React from 'react';
-export interface BtnProps {
+export declare type BtnProps = {
     disabled?: boolean;
     noBorder?: boolean;
     wide?: boolean;
+    small?: boolean;
     color?: string;
     borderColor?: string;
     textColor?: string;
-}
-export declare function Btn(props: BtnProps & React.HTMLAttributes<HTMLSpanElement>): JSX.Element;
+    forceActive?: boolean;
+} & React.HTMLAttributes<HTMLSpanElement>;
+export declare function Btn(props: BtnProps): JSX.Element;

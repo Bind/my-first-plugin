@@ -1,9 +1,11 @@
 /// <reference types="node" />
+import { EthAddress } from "@darkforest_eth/types";
 import { EventEmitter } from "events";
-export declare enum TutorialManagerEvent {
+import GameUIManager from "./GameUIManager";
+export declare const enum TutorialManagerEvent {
     StateChanged = "StateChanged"
 }
-export declare enum TutorialState {
+export declare const enum TutorialState {
     None = 0,
     HomePlanet = 1,
     SendFleet = 2,
@@ -13,9 +15,10 @@ export declare enum TutorialState {
     MinerPause = 6,
     Terminal = 7,
     HowToGetScore = 8,
-    Valhalla = 9,
-    AlmostCompleted = 10,
-    Completed = 11
+    ScoringDetails = 9,
+    Valhalla = 10,
+    AlmostCompleted = 11,
+    Completed = 12
 }
 declare class TutorialManager extends EventEmitter {
     static instance: TutorialManager;
@@ -24,8 +27,8 @@ declare class TutorialManager extends EventEmitter {
     static getInstance(): TutorialManager;
     setTutorialState(newState: TutorialState): void;
     advance(): void;
-    reset(): void;
-    complete(): void;
+    reset(account: EthAddress | undefined): void;
+    complete(gameUiManager: GameUIManager): void;
     acceptInput(state: TutorialState): void;
 }
 export default TutorialManager;

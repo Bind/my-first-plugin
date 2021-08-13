@@ -1,4 +1,4 @@
-export declare enum Incompatibility {
+export declare const enum Incompatibility {
     NoIDB = "no_idb",
     NotRopsten = "not_ropsten",
     MobileOrTablet = "mobile_or_tablet",

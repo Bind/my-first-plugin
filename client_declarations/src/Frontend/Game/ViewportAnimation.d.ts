@@ -1,6 +1,6 @@
 import { WorldCoords } from "@darkforest_eth/types";
-import Viewport from "./Viewport";
 import anime from "animejs";
+import Viewport from "./Viewport";
 export declare class ViewportAnimation {
     readonly timeStarted: number;
     readonly coordsStart: WorldCoords;

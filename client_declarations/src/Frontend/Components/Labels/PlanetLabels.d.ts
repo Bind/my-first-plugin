@@ -1,7 +1,9 @@
 import { Planet } from '@darkforest_eth/types';
-export declare function StatText({ planet, getStat, }: {
+import React from 'react';
+export declare function StatText({ planet, getStat, style, }: {
     planet: Planet | undefined;
     getStat: (p: Planet) => number;
+    style?: React.CSSProperties;
 }): JSX.Element;
 export declare const SilverText: ({ planet }: {
     planet: Planet | undefined;
@@ -56,8 +58,17 @@ export declare const PlanetTypeLabelAnim: ({ planet }: {
 export declare const PlanetBiomeTypeLabelAnim: ({ planet }: {
     planet: Planet | undefined;
 }) => JSX.Element;
-export declare function PlanetOwnerLabel({ planet, showYours, color, }: {
+export declare const PlanetLevel: ({ planet }: {
     planet: Planet | undefined;
-    showYours?: boolean;
-    color?: boolean;
+}) => JSX.Element;
+export declare const PlanetRank: ({ planet }: {
+    planet: Planet | undefined;
+}) => JSX.Element;
+/**
+ * Either 'yours' in green text,
+ */
+export declare function PlanetOwnerLabel({ planet, abbreviateOwnAddress, colorWithOwnerColor, }: {
+    planet: Planet | undefined;
+    abbreviateOwnAddress?: boolean;
+    colorWithOwnerColor?: boolean;
 }): JSX.Element;

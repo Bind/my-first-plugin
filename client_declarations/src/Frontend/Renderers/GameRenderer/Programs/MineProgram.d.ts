@@ -1,4 +1,4 @@
-import { UniformType, AttribType } from '../EngineTypes';
+import { AttribType, UniformType } from '../EngineTypes';
 export declare const MINE_PROGRAM_DEFINITION: {
     uniforms: {
         matrix: {

@@ -1,7 +1,8 @@
-import { Artifact, ArtifactId } from '@darkforest_eth/types';
+import { Artifact } from '@darkforest_eth/types';
 import React from 'react';
-export declare function ArtifactListItem({ artifact, openArtifactDetails, actions, }: {
+import { ModalHandle } from '../../Views/ModalPane';
+export declare function ArtifactListItem({ artifact, actions, modal, }: {
     artifact: Artifact | undefined;
-    openArtifactDetails: (artifactId: ArtifactId) => void;
+    modal: ModalHandle;
     actions: (artifact: Artifact) => React.ReactElement | undefined;
 }): JSX.Element;

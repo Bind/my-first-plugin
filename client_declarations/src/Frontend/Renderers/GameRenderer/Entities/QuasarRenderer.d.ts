@@ -1,5 +1,5 @@
-import { CanvasCoords } from "../../../../Backend/Utils/Coordinates";
 import { Planet, WorldCoords } from "@darkforest_eth/types";
+import { CanvasCoords } from "../../../../Backend/Utils/Coordinates";
 import Renderer from "../Renderer";
 import { WebGLManager } from "../WebGL/WebGLManager";
 import { QuasarBodyRenderer } from "./QuasarBodyRenderer";

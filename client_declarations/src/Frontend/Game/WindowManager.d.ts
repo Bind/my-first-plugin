@@ -1,23 +1,23 @@
 /// <reference types="node" />
-import { EventEmitter } from "events";
 import { WorldCoords } from "@darkforest_eth/types";
+import { EventEmitter } from "events";
 export declare type MousePos = {
     x: number;
     y: number;
 };
-export declare enum WindowManagerEvent {
+export declare const enum WindowManagerEvent {
     StateChanged = "StateChanged",
     MiningCoordsUpdate = "MiningCoordsUpdate",
     TooltipUpdated = "TooltipUpdated",
     CtrlDown = "CtrlDown",
     CtrlUp = "CtrlUp"
 }
-export declare enum CursorState {
+export declare const enum CursorState {
     Normal = 0,
     TargetingExplorer = 1,
     TargetingForces = 2
 }
-export declare enum TooltipName {
+export declare const enum TooltipName {
     None = 0,
     SilverGrowth = 1,
     SilverCap = 2,
@@ -34,40 +34,39 @@ export declare enum TooltipName {
     FindArtifact = 13,
     ArtifactStored = 14,
     SelectedSilver = 15,
-    SelectedEnergy = 16,
-    Rank = 17,
-    Score = 18,
-    MiningPause = 19,
-    MiningTarget = 20,
-    HashesPerSec = 21,
-    CurrentMining = 22,
-    HoverPlanet = 23,
-    SilverProd = 24,
-    BonusEnergyCap = 25,
-    BonusEnergyGro = 26,
-    BonusRange = 27,
-    BonusSpeed = 28,
-    BonusDefense = 29,
-    Energy = 30,
-    EnergyGrowth = 31,
-    Range = 32,
-    Speed = 33,
-    Defense = 34,
-    Clowntown = 35,
-    ArtifactBuff = 36,
-    ModalHelp = 37,
-    ModalPlanetDetails = 38,
-    ModalLeaderboard = 39,
-    ModalPlanetDex = 40,
-    ModalUpgradeDetails = 41,
-    ModalTwitterVerification = 42,
-    ModalTwitterBroadcast = 43,
-    ModalHats = 44,
-    ModalSettings = 45,
-    ModalYourArtifacts = 46,
-    ModalFindArtifact = 47,
-    ModalPlugins = 48,
-    ModalWithdrawSilver = 49
+    Rank = 16,
+    Score = 17,
+    MiningPause = 18,
+    MiningTarget = 19,
+    HashesPerSec = 20,
+    CurrentMining = 21,
+    HoverPlanet = 22,
+    SilverProd = 23,
+    BonusEnergyCap = 24,
+    BonusEnergyGro = 25,
+    BonusRange = 26,
+    BonusSpeed = 27,
+    BonusDefense = 28,
+    Energy = 29,
+    EnergyGrowth = 30,
+    Range = 31,
+    Speed = 32,
+    Defense = 33,
+    Clowntown = 34,
+    ArtifactBuff = 35,
+    ModalHelp = 36,
+    ModalPlanetDetails = 37,
+    ModalLeaderboard = 38,
+    ModalPlanetDex = 39,
+    ModalUpgradeDetails = 40,
+    ModalTwitterVerification = 41,
+    ModalTwitterBroadcast = 42,
+    ModalHats = 43,
+    ModalSettings = 44,
+    ModalYourArtifacts = 45,
+    ModalFindArtifact = 46,
+    ModalPlugins = 47,
+    ModalWithdrawSilver = 48
 }
 declare class WindowManager extends EventEmitter {
     static instance: WindowManager;

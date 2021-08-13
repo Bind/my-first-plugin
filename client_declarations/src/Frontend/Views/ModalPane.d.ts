@@ -1,16 +1,15 @@
 import React from 'react';
 import { Hook } from '../../_types/global/GlobalTypes';
 import { PaneProps } from '../Components/GameWindowComponents';
-export declare const RECOMMENDED_WIDTH = "450px";
 export declare type ModalHook = Hook<boolean>;
-export declare enum ModalName {
+export declare const enum ModalName {
     Help = 0,
     PlanetDetails = 1,
     Leaderboard = 2,
     PlanetDex = 3,
     UpgradeDetails = 4,
     TwitterVerify = 5,
-    TwitterBroadcast = 6,
+    Broadcast = 6,
     Hats = 7,
     Settings = 8,
     YourArtifacts = 9,
@@ -24,7 +23,8 @@ export declare enum ModalName {
     Onboarding = 17,
     Private = 18
 }
-export declare function ModalPane({ children, title, hook: [visible, setVisible], hideClose, style, noPadding, helpContent, width, borderColor, backgroundColor, titlebarColor, }: PaneProps & {
+export declare type ModalProps = PaneProps & {
+    title: string | React.ReactNode;
     hook: Hook<boolean>;
     name?: ModalName;
     hideClose?: boolean;
@@ -35,4 +35,25 @@ export declare function ModalPane({ children, title, hook: [visible, setVisible]
     borderColor?: string;
     backgroundColor?: string;
     titlebarColor?: string;
-}): JSX.Element;
+    initialPosition?: {
+        x: number;
+        y: number;
+    };
+};
+/**
+ * A modal has a {@code content}, and also optionally many {@link ModalFrames} pushed on top of it.
+ */
+export interface ModalFrame {
+    title: string;
+    element: () => React.ReactElement;
+    helpContent?: React.ReactElement;
+}
+/**
+ * @todo Add things like open, close, set position, etc. Get rid of {@code ModalHook}.
+ */
+export interface ModalHandle {
+    push(frame: ModalFrame): void;
+    popAll(): void;
+    pop(): void;
+}
+export declare function ModalPane({ children, title, hook: [visible, setVisible], hideClose, style, helpContent, width, borderColor, backgroundColor, titlebarColor, initialPosition, }: ModalProps): JSX.Element;

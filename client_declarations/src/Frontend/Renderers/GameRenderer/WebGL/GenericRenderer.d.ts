@@ -1,6 +1,6 @@
+import { AttribProps, DrawMode, UniformJSType, UniformProps } from "../EngineTypes";
 import AttribManager from "./AttribManager";
 import { WebGLManager } from "./WebGLManager";
-import { UniformProps, AttribProps, UniformJSType, DrawMode } from "../EngineTypes";
 declare type UniformData = {
     [key: string]: UniformProps;
 };

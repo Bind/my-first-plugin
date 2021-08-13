@@ -1,18 +1,18 @@
-import { ArtifactId, Upgrade, Artifact } from '@darkforest_eth/types';
-import { Wrapper } from '../../Backend/Utils/Wrapper';
-import { StatIdx } from '../../_types/global/GlobalTypes';
-import { ModalHook } from '../Views/ModalPane';
+import { ArtifactId, Upgrade } from '@darkforest_eth/types';
 import { ContractConstants } from '../../_types/darkforest/api/ContractsAPITypes';
+import { StatIdx } from '../../_types/global/GlobalTypes';
+import { ModalHandle } from '../Views/ModalPane';
 export declare function UpgradeStatInfo({ upgrades, stat, }: {
     upgrades: (Upgrade | undefined)[];
     stat: StatIdx;
 }): JSX.Element;
-export declare function ArtifactDetailsBody({ artifactWrapper, contractConstants, openConversationForArtifact, }: {
-    artifactWrapper: Wrapper<Artifact | undefined>;
+export declare function ArtifactDetailsHelpContent(): JSX.Element;
+export declare function ArtifactDetailsBody({ artifactId, contractConstants, }: {
+    artifactId: ArtifactId;
     contractConstants: ContractConstants;
-    openConversationForArtifact: (id: ArtifactId) => void;
+    modal: ModalHandle;
 }): JSX.Element | null;
-export declare function ArtifactDetailsPane({ hook, openConversationForArtifact, }: {
-    hook: ModalHook;
-    openConversationForArtifact: (id: ArtifactId) => void;
+export declare function ArtifactDetailsPane({ modal, artifactId, }: {
+    modal: ModalHandle;
+    artifactId: ArtifactId;
 }): JSX.Element;

@@ -1,6 +1,6 @@
-import { Monomitter } from '../../Frontend/Utils/Monomitter';
+import { Monomitter } from '@darkforest_eth/events';
 import { PluginProcess } from '../Plugins/PluginProcess';
-import { SerializedPlugin, PluginId } from '../Plugins/SerializedPlugin';
+import { PluginId, SerializedPlugin } from '../Plugins/SerializedPlugin';
 import GameManager from './GameManager';
 /**
  * Represents book-keeping information about a running process. We keep it
@@ -82,7 +82,7 @@ export declare class PluginManager {
     /**
      * adds a new plugin into the plugin library.
      */
-    addPluginToLibrary(name: string, code?: string, localFilename?: string): SerializedPlugin;
+    addPluginToLibrary(id: PluginId, name: string, code: string): SerializedPlugin;
     /**
      * Either spawns the given plugin by evaluating its `pluginCode`, or
      * returns the already running plugin instance. If starting a plugin
@@ -111,7 +111,8 @@ export declare class PluginManager {
      * function, then draw that plugin to the screen.
      */
     drawAllRunningPlugins(ctx: CanvasRenderingContext2D): void;
-    private onNewLocalPlugins;
+    private hasPlugin;
+    private onNewEmbeddedPlugins;
     private notifyPluginLibraryUpdated;
     /**
      * To prevent users of this class from modifying our plugins library,

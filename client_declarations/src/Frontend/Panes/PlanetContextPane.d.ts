@@ -1,5 +1,4 @@
 import { ModalHook } from '../Views/ModalPane';
-import { PlanetNotifHooks } from '../Views/PlanetNotifications';
-export declare function PlanetContextPane({ hook, upgradeDetHook, }: {
+export declare function PlanetContextPane({ hook }: {
     hook: ModalHook;
-} & PlanetNotifHooks): JSX.Element;
+}): JSX.Element;

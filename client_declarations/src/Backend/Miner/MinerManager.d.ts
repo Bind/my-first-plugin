@@ -1,11 +1,11 @@
 /// <reference types="node" />
-import { ExploredChunkData, Rectangle, HashConfig } from "../../_types/global/GlobalTypes";
-import Worker from "worker-loader!./miner.worker";
-import { EventEmitter } from "events";
-import { MiningPattern } from "./MiningPatterns";
 import { PerlinConfig } from "@darkforest_eth/hashing";
+import { EventEmitter } from "events";
+import Worker from "worker-loader!./miner.worker";
 import { ChunkStore } from "../../_types/darkforest/api/ChunkStoreTypes";
-export declare enum MinerManagerEvent {
+import { Chunk, HashConfig, Rectangle } from "../../_types/global/GlobalTypes";
+import { MiningPattern } from "./MiningPatterns";
+export declare const enum MinerManagerEvent {
     DiscoveredNewChunk = "DiscoveredNewChunk"
 }
 export declare class HomePlanetMinerChunkStore implements ChunkStore {
@@ -14,7 +14,7 @@ export declare class HomePlanetMinerChunkStore implements ChunkStore {
     minedChunkKeys: Set<string>;
     perlinOptions: PerlinConfig;
     constructor(initPerlinMin: number, initPerlinMax: number, hashConfig: HashConfig);
-    addChunk(exploredChunk: ExploredChunkData): void;
+    addChunk(exploredChunk: Chunk): void;
     hasMinedChunk(chunkFootprint: Rectangle): boolean;
 }
 declare class MinerManager extends EventEmitter {
@@ -26,7 +26,7 @@ declare class MinerManager extends EventEmitter {
     worldRadius: number;
     cores: number;
     exploringChunk: {
-        [chunkKey: string]: ExploredChunkData;
+        [chunkKey: string]: Chunk;
     };
     exploringChunkStart: {
         [chunkKey: string]: number;
@@ -45,7 +45,7 @@ declare class MinerManager extends EventEmitter {
     destroy(): void;
     static create(chunkStore: ChunkStore, miningPattern: MiningPattern, worldRadius: number, planetRarity: number, hashConfig: HashConfig, useMockHash?: boolean, WorkerCtor?: typeof Worker): MinerManager;
     initWorker(index: number): void;
-    onDiscovered(exploredChunk: ExploredChunkData, jobId: number): Promise<void>;
+    onDiscovered(exploredChunk: Chunk, jobId: number): Promise<void>;
     exploreNext(fromChunk: Rectangle, jobId: number): void;
     setCores(nCores: number): void;
     startExplore(): void;

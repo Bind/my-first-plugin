@@ -1,9 +1,9 @@
-import { CanvasCoords } from "../../../../Backend/Utils/Coordinates";
-import { TEXT_PROGRAM_DEFINITION } from "../Programs/TextProgram";
-import { WebGLManager } from "../WebGL/WebGLManager";
-import { RGBAVec, TextAlign, TextAnchor } from "../EngineTypes";
-import { GenericRenderer } from "../WebGL/GenericRenderer";
 import { WorldCoords } from "@darkforest_eth/types";
+import { CanvasCoords } from "../../../../Backend/Utils/Coordinates";
+import { RGBAVec, TextAlign, TextAnchor } from "../EngineTypes";
+import { TEXT_PROGRAM_DEFINITION } from "../Programs/TextProgram";
+import { GenericRenderer } from "../WebGL/GenericRenderer";
+import { WebGLManager } from "../WebGL/WebGLManager";
 declare type GlyphInfo = {
     x: number;
     y: number;

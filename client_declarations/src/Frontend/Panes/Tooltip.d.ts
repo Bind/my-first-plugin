@@ -9,6 +9,6 @@ declare type TooltipProps = {
     style?: React.CSSProperties;
     className?: string;
 };
-export declare function TooltipTrigger({ children, name, needsCtrl, display, style, className, }: TooltipProps): JSX.Element;
+export declare function TooltipTrigger({ children, name, display, style, className }: TooltipProps): JSX.Element;
 export declare function Tooltip(): JSX.Element;
 export {};

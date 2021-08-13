@@ -1,4 +1,4 @@
-import { Upgrade, Planet, UpgradeBranchName } from '@darkforest_eth/types';
+import { Planet, Upgrade, UpgradeBranchName } from '@darkforest_eth/types';
 export declare function UpgradePreview({ planet, upgrade, branchName, cantUpgrade, }: {
     planet: Planet | undefined;
     upgrade: Upgrade | undefined;

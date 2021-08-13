@@ -1,5 +1,5 @@
-import { CanvasCoords } from '../../../../Backend/Utils/Coordinates';
 import { Planet } from '@darkforest_eth/types';
+import { CanvasCoords } from '../../../../Backend/Utils/Coordinates';
 import Viewport from '../../../Game/Viewport';
 import { RGBVec } from '../EngineTypes';
 import { ASTEROID_PROGRAM_DEFINITION } from '../Programs/AsteroidProgram';

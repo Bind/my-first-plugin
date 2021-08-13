@@ -1,4 +1,4 @@
-import { Artifact, Biome, ArtifactRarity, ArtifactType } from "@darkforest_eth/types";
+import { Artifact, ArtifactRarity, ArtifactType, Biome } from "@darkforest_eth/types";
 import { SpriteRenderer } from "../GameRenderer/Entities/SpriteRenderer";
 import { WebGLManager } from "../GameRenderer/WebGL/WebGLManager";
 export declare const artifactColM = 32;

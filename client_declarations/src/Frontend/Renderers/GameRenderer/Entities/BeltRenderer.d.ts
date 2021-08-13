@@ -1,7 +1,7 @@
-import { CanvasCoords } from '../../../../Backend/Utils/Coordinates';
 import { Planet, WorldCoords } from '@darkforest_eth/types';
+import { CanvasCoords } from '../../../../Backend/Utils/Coordinates';
 import { RGBVec } from '../EngineTypes';
-import { BELT_PROGRAM_DEFINITION, BeltProps } from '../Programs/BeltProgram';
+import { BeltProps, BELT_PROGRAM_DEFINITION } from '../Programs/BeltProgram';
 import { GenericRenderer } from '../WebGL/GenericRenderer';
 import { WebGLManager } from '../WebGL/WebGLManager';
 export default class BeltRenderer extends GenericRenderer<typeof BELT_PROGRAM_DEFINITION> {

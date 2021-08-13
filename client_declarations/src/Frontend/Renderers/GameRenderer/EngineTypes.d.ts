@@ -1,4 +1,4 @@
-import { mat4, mat3 } from 'gl-matrix';
+import { mat3, mat4 } from 'gl-matrix';
 export declare enum AttribType {
     Float,
     UByte
@@ -14,14 +14,16 @@ export declare type AttribProps = {
     normalize: boolean;
     name: string;
 };
-export declare enum UniformType {
+export declare const enum UniformType {
     Mat4 = 0,
     Mat3 = 1,
     UByte = 2,
     Float = 3,
-    Texture = 4
+    Texture = 4,
+    Vec3 = 5
 }
-export declare type UniformJSType = mat4 | mat3 | number;
+export declare type Vec3 = [number, number, number];
+export declare type UniformJSType = mat4 | mat3 | number | Vec3;
 export declare type UniformProps = {
     name: string;
     type: UniformType;
@@ -36,18 +38,18 @@ export declare type Scaling = {
     x: number;
     y: number;
 };
-export declare type HSLVec = [number, number, number];
-export declare enum TextAlign {
+export declare type HSLVec = readonly [number, number, number];
+export declare const enum TextAlign {
     Left = 0,
     Center = 0.5,
     Right = 1
 }
-export declare enum TextAnchor {
+export declare const enum TextAnchor {
     Top = 0,
     Middle = 0.5,
     Bottom = 1
 }
-export declare enum RenderZIndex {
+export declare const enum RenderZIndex {
     Background = 0,
     Voyages = -1,
     Planets = -10,
