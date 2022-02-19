@@ -1,6 +1,6 @@
 /// <reference types="node" />
-import { WorldCoords } from "@darkforest_eth/types";
-import { EventEmitter } from "events";
+import { WorldCoords } from '@darkforest_eth/types';
+import { EventEmitter } from 'events';
 export declare type MousePos = {
     x: number;
     y: number;
@@ -70,12 +70,12 @@ export declare const enum TooltipName {
 }
 declare class WindowManager extends EventEmitter {
     static instance: WindowManager;
-    mousePos: MousePos;
-    mousedownPos: MousePos | null;
-    lastZIndex: number;
-    cursorState: CursorState;
-    currentTooltip: TooltipName;
-    constructor();
+    private mousePos;
+    private mousedownPos;
+    private lastZIndex;
+    private cursorState;
+    private currentTooltip;
+    private constructor();
     static getInstance(): WindowManager;
     setTooltip(tooltip: TooltipName): void;
     getTooltip(): TooltipName;

@@ -1,9 +1,7 @@
 import { ContractFunction } from "ethers";
-import { DiagnosticUpdater } from "../Interfaces/DiagnosticUpdater";
+import { ThrottledConcurrentQueue } from "../Network/ThrottledConcurrentQueue";
 export declare class ContractCaller {
-    private diagnosticsUpdater?;
-    private static readonly MAX_RETRIES;
-    private readonly callQueue;
+    static readonly MAX_RETRIES = 12;
+    readonly callQueue: ThrottledConcurrentQueue;
     makeCall<T>(contractViewFunction: ContractFunction<T>, args?: unknown[]): Promise<T>;
-    setDiagnosticUpdater(diagnosticUpdater?: DiagnosticUpdater): void;
 }

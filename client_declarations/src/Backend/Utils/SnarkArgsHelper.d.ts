@@ -1,6 +1,6 @@
 /// <reference types="react" />
-import { PerlinConfig } from "@darkforest_eth/hashing";
 import { BiomebaseSnarkContractCallArgs, BiomebaseSnarkInput, InitSnarkContractCallArgs, InitSnarkInput, MoveSnarkContractCallArgs, MoveSnarkInput, RevealSnarkContractCallArgs, RevealSnarkInput, SnarkJSProofAndSignals } from "@darkforest_eth/snarks";
+import { PerlinConfig } from "@darkforest_eth/types";
 import { BigInteger } from "big-integer";
 import FastQueue from "fastq";
 import { LRUMap } from "mnemonist";

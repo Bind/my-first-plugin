@@ -1,4 +1,4 @@
-import { AttribType } from "../EngineTypes";
+import { AttribType } from '../EngineTypes';
 export declare type GLArray = Float32Array | Uint8Array;
 /**
  * Helper class - essentially an implementation of ArrayList from Java, but using
@@ -12,20 +12,20 @@ export declare class AttribArray {
     /**
      * The number of bytes per data entry in this array.
      */
-    size: number;
+    private size;
     /**
      * The WebGL data type that this array represents.
      */
-    type: AttribType;
+    private type;
     constructor(type: AttribType, startSize?: number);
     /**
      * Initialize a new blank array of size this.size.
      */
-    createArray(): void;
+    private createArray;
     /**
      * Initialize a new array of 2x the length, and copy in the old data.
      */
-    doubleLen(): void;
+    private doubleLen;
     /**
      * Copy in an array of data starting at an index. Writing past the maximum
      * array length will trigger doubleLen().

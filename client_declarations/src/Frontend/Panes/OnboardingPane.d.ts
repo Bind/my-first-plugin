@@ -1,4 +1,5 @@
-import { Hook } from '../../_types/global/GlobalTypes';
-export default function OnboardingPane({ newPlayerHook }: {
-    newPlayerHook: Hook<boolean>;
+/// <reference types="react" />
+export default function OnboardingPane({ visible, onClose, }: {
+    visible: boolean;
+    onClose: () => void;
 }): JSX.Element;

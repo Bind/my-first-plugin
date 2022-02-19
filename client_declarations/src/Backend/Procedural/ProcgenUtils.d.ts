@@ -1,6 +1,6 @@
-import { ArtifactId, Biome, EthAddress, LocationId, Planet, UpgradeBranchName } from "@darkforest_eth/types";
-import { HSLVec, RGBAVec, RGBVec } from "../../Frontend/Renderers/GameRenderer/EngineTypes";
-import { PlanetCosmeticInfo, RuinsInfo } from "../Utils/UtilsTypes";
+import { ArtifactId, Biome, EthAddress, LocationId, Planet, UpgradeBranchName } from '@darkforest_eth/types';
+import { HSLVec, RGBAVec, RGBVec } from '../../Frontend/Renderers/GameRenderer/EngineTypes';
+import { PlanetCosmeticInfo, RuinsInfo } from '../Utils/UtilsTypes';
 export declare type PixelCoords = {
     x: number;
     y: number;
@@ -10,22 +10,18 @@ export declare type QuoteData = {
     author: string;
 };
 export declare class ProcgenUtils {
-    static blurbsById: Map<LocationId, string>;
-    static blurbs2ById: Map<LocationId, string>;
-    static cosmeticByLocId: Map<LocationId, PlanetCosmeticInfo>;
-    static baseByBiome: {
-        readonly [Biome: number]: HSLVec;
-    };
-    static oceanByBiome: {
-        readonly [Biome: number]: HSLVec;
-    };
-    static strByBiome: Map<Biome, string>;
+    private static blurbsById;
+    private static blurbs2ById;
+    private static cosmeticByLocId;
+    private static baseByBiome;
+    private static oceanByBiome;
+    private static strByBiome;
     static getBiomeRgbStr(biome: Biome): string;
     static grayColors: PlanetCosmeticInfo;
-    static namesById: Map<LocationId, string>;
-    static taglinesById: Map<LocationId, string>;
-    static huesByHash: Map<string, number>;
-    static rgbsByHash: Map<string, RGBAVec>;
+    private static namesById;
+    private static taglinesById;
+    private static huesByHash;
+    private static rgbsByHash;
     static ellipsisStr(str: string, maxLen: number): string;
     static ellipsStrEnd(str: string, maxLen: number): string;
     static hslStr(h: number, s: number, l: number): string;

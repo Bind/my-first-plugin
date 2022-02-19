@@ -4,7 +4,6 @@ export declare const blocksLeftToProspectExpiration: (currentBlockNumber: number
 export declare const prospectExpired: (currentBlockNumber: number, prospectedBlockNumber: number) => boolean;
 export declare const isFindable: (planet: Planet, currentBlockNumber?: number | undefined) => boolean;
 export declare const isProspectable: (planet: Planet) => boolean;
-export declare const enoughEnergyToProspect: (p: Planet) => boolean;
 export declare const updatePlanetToTime: (planet: Planet, planetArtifacts: Artifact[], atTimeMillis: number, contractConstants: ContractConstants, setPlanet?: (p: Planet) => void) => void;
 export declare const applyUpgrade: (planet: Planet, upgrade: Upgrade, unApply?: boolean) => void;
 /**
@@ -17,7 +16,7 @@ export interface PlanetDiff {
     current: Planet;
     arrival: QueuedArrival;
 }
-export declare const arrive: (toPlanet: Planet, artifactsOnPlanet: Artifact[], arrival: QueuedArrival, contractConstants: ContractConstants) => PlanetDiff;
+export declare const arrive: (toPlanet: Planet, artifactsOnPlanet: Artifact[], arrival: QueuedArrival, arrivingArtifact: Artifact | undefined, contractConstants: ContractConstants) => PlanetDiff;
 /**
  * @todo ArrivalUtils has become a dumping ground for functions that should just live inside of a
  * `Planet` class.
@@ -25,5 +24,7 @@ export declare const arrive: (toPlanet: Planet, artifactsOnPlanet: Artifact[], a
 export declare function getEmojiMessage(planet: Planet | undefined): PlanetMessage<EmojiFlagBody> | undefined;
 /**
  * @todo - planet class
+ * @param rangeBoost A multiplier to be applied to the resulting range.
+ * Currently used for calculating boost associated with abandoning a planet.
  */
-export declare function getRange(planet: Planet, percentEnergySending?: number): number;
+export declare function getRange(planet: Planet, percentEnergySending?: number, rangeBoost?: number): number;

@@ -1,10 +1,11 @@
 /// <reference types="react" />
-import { Artifact, ArtifactId, EthAddress, Leaderboard, LocationId, Planet, Player } from '@darkforest_eth/types';
+import { Artifact, ArtifactId, EthAddress, Leaderboard, LocationId, Planet, Player, Transaction, TransactionId } from '@darkforest_eth/types';
 import GameUIManager from '../../Backend/GameLogic/GameUIManager';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
 import { ModalHandle } from '../Views/ModalPane';
 export declare const useUIManager: () => GameUIManager, UIManagerProvider: import("react").Provider<GameUIManager>;
 export declare const useTopLevelDiv: () => HTMLDivElement, TopLevelDivProvider: import("react").Provider<HTMLDivElement>;
+export declare function useOverlayContainer(): HTMLDivElement | null;
 /**
  * Get the currently used account on the client.
  * @param uiManager instance of GameUIManager
@@ -26,6 +27,8 @@ export declare function usePlanet(uiManager: GameUIManager, locationId: Location
  * @param uiManager instance of GameUIManager
  */
 export declare function useHoverPlanet(uiManager: GameUIManager): Wrapper<Planet | undefined>;
+export declare function useHoverArtifact(uiManager: GameUIManager): Wrapper<Artifact | undefined>;
+export declare function useHoverArtifactId(uiManager: GameUIManager): Wrapper<ArtifactId | undefined>;
 export declare function useMyArtifacts(uiManager: GameUIManager): Wrapper<Artifact[]>;
 export declare function useMyArtifactsList(uiManager: GameUIManager): Artifact[];
 export declare function usePlanetArtifacts(planet: Wrapper<Planet | undefined>, uiManager: GameUIManager): Artifact[];
@@ -43,7 +46,10 @@ export declare function useLeaderboard(poll?: number | undefined): {
     error: Error | undefined;
 };
 export declare function usePopAllOnSelectedPlanetChanged(modal: ModalHandle, startingId: LocationId | undefined): void;
+export declare type TransactionRecord = Record<TransactionId, Transaction>;
 /**
- * Calls {@code onCompleted} when the user sends a move via the ui.
+ * Creates subscriptions to all contract transaction events to keep an up to date
+ * list of all transactions and their states.
  */
-export declare function useOnSendCompleted(onCompleted: () => void): void;
+export declare function useTransactionLog(): Wrapper<TransactionRecord>;
+export declare function usePaused(): boolean;

@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { Artifact, Biome, LocatablePlanet, Planet } from '@darkforest_eth/types';
 /** Renders colored text corresponding to a biome */
 export declare const BiomeLabel: import("styled-components").StyledComponent<"span", any, {

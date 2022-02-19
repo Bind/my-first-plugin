@@ -1,6 +1,6 @@
 export declare class Lazy<T> {
-    getPromise: () => Promise<T>;
-    promise: Promise<T> | undefined;
+    private getPromise;
+    private promise;
     constructor(getPromise: () => Promise<T>);
     get(): Promise<T>;
 }

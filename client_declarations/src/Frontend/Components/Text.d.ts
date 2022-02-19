@@ -1,6 +1,5 @@
-import { ArtifactId, Planet, SubmittedTx, WorldCoords } from '@darkforest_eth/types';
+import { ArtifactId, Chunk, Planet, Transaction, WorldCoords } from '@darkforest_eth/types';
 import React from 'react';
-import { Chunk } from '../../_types/global/GlobalTypes';
 export declare function BlinkCursor(): JSX.Element;
 export declare const Green: import("styled-components").StyledComponent<"span", any, {}, never>;
 export declare const Sub: import("styled-components").StyledComponent<"span", any, {}, never>;
@@ -17,7 +16,7 @@ export declare const Invisible: import("styled-components").StyledComponent<"spa
 export declare const Smaller: import("styled-components").StyledComponent<"span", any, {}, never>;
 export declare const HideSmall: import("styled-components").StyledComponent<"span", any, {}, never>;
 export declare function TxLink({ tx }: {
-    tx: SubmittedTx;
+    tx: Transaction;
 }): JSX.Element;
 export declare function CenterPlanetLink({ planet, children, }: {
     planet: Planet;

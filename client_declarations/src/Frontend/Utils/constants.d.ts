@@ -10,10 +10,10 @@ declare const MIN_CHUNK_SIZE = 16;
 declare const MAX_CHUNK_SIZE: number;
 declare const LOCATION_ID_UB: bigInt.BigInteger;
 export { MIN_CHUNK_SIZE, MAX_CHUNK_SIZE, LOCATION_ID_UB };
-export declare const HAT_SIZES: string[];
-export declare const enum GameWindowZIndex {
+export declare const enum DFZIndex {
     MenuBar = 4,
-    HoverPlanet = 999,
-    Modal = 1000,
-    Tooltip = 16000000
+    HoverPlanet = 1001,
+    Modal = 1001,
+    Tooltip = 16000000,
+    Notification = 1000
 }

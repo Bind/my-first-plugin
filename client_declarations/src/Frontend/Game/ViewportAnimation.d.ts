@@ -1,6 +1,5 @@
-import { WorldCoords } from "@darkforest_eth/types";
-import anime from "animejs";
-import Viewport from "./Viewport";
+import { WorldCoords } from '@darkforest_eth/types';
+import Viewport from './Viewport';
 export declare class ViewportAnimation {
     readonly timeStarted: number;
     readonly coordsStart: WorldCoords;
@@ -13,7 +12,7 @@ export declare class ViewportAnimation {
     apply(percent: number, viewport: Viewport): void;
 }
 export declare class AnimationManager {
-    currentAnimation?: anime.AnimeInstance;
+    private currentAnimation?;
     stopCurrentAnimation(): void;
     replaceAnimation(animation: ViewportAnimation): void;
 }

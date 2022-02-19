@@ -1,6 +1,5 @@
-import { LocationId, WorldCoords, WorldLocation } from "@darkforest_eth/types";
+import { LocationId, Radii, WorldCoords, WorldLocation } from "@darkforest_eth/types";
 import { Point, QuadTree } from "js-quadtree";
-import { Radii } from "./ViewportEntities";
 /**
  * Data structure which allows us to efficiently query for "which planets between level X and X + n
  * (for positive n) are present in the given world rectangle", as well as, in the future, "which

@@ -1,3 +1,4 @@
+/// <reference types="react" />
 export declare const ARTIFACT_ROW_H = 48;
 export declare const SPACE_TYPE_COLORS: {
     readonly [x: number]: "rgb(0, 20.4, 81.6)" | "rgb(0, 5.4, 43.35)" | "rgb(2.04, 0, 6.12)" | "rgb(0, 37, 1)";
@@ -5,6 +6,7 @@ export declare const SPACE_TYPE_COLORS: {
 declare const dfstyles: {
     colors: {
         text: string;
+        textLight: string;
         subtext: string;
         subbertext: string;
         subbesttext: string;
@@ -17,6 +19,7 @@ declare const dfstyles: {
         border: string;
         borderDark: string;
         borderDarker: string;
+        borderDarkest: string;
         dfgreen: string;
         dfgreendark: string;
         dfgreenlight: string;
@@ -24,6 +27,7 @@ declare const dfstyles: {
         dfyellow: string;
         dfpurple: string;
         dfwhite: string;
+        dforange: string;
         artifactBackground: string;
         icons: {
             twitter: string;
@@ -58,6 +62,7 @@ declare const dfstyles: {
             energyCap: string;
             speed: string;
             def: string;
+            spaceJunk: string;
             energyGro: string;
             range: string;
         };
@@ -80,5 +85,6 @@ export declare const snips: {
     roundedBordersWithEdge: import("styled-components").FlattenSimpleInterpolation;
     absoluteTopLeft: import("styled-components").FlattenSimpleInterpolation;
     pane: string;
+    destroyedBackground: CSSStyleDeclaration & import("react").CSSProperties;
 };
 export default dfstyles;

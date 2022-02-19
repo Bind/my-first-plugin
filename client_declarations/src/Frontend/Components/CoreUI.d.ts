@@ -1,5 +1,4 @@
 import React from 'react';
-import { BtnProps } from './Btn';
 export declare const InlineBlock: import("styled-components").StyledComponent<"div", any, {}, never>;
 export declare const Separator: import("styled-components").StyledComponent<"div", any, {}, never>;
 export declare const FloatRight: import("styled-components").StyledComponent<"div", any, {}, never>;
@@ -10,13 +9,6 @@ export declare const Padded: import("styled-components").StyledComponent<"div", 
     right?: string | undefined;
     bottom?: string | undefined;
 }, never>;
-export declare const PaddedRecommendedModalWidth: import("styled-components").StyledComponent<"div", any, {
-    left?: string | undefined;
-    top?: string | undefined;
-    right?: string | undefined;
-    bottom?: string | undefined;
-}, never>;
-export declare const RecommendedModalWidth: import("styled-components").StyledComponent<"div", any, {}, never>;
 export declare const BorderlessPane: import("styled-components").StyledComponent<"div", any, {}, never>;
 export declare const Underline: import("styled-components").StyledComponent<"span", any, {}, never>;
 export declare const Display: import("styled-components").StyledComponent<"div", any, {
@@ -30,9 +22,6 @@ export declare const Bottom: import("styled-components").StyledComponent<"div", 
 export declare const VerticalSplit: ({ children, }: {
     children: [React.ReactNode, React.ReactNode];
 }) => JSX.Element;
-export declare const FullWidth: import("styled-components").StyledComponent<"div", any, {
-    padding?: string | undefined;
-}, never>;
 export declare const FullHeight: import("styled-components").StyledComponent<"div", any, {}, never>;
 /**
  * Fills parent width, aligns children horizontally in the center.
@@ -70,6 +59,9 @@ export declare const Spacer: import("styled-components").StyledComponent<"div", 
 export declare const Truncate: import("styled-components").StyledComponent<"div", any, {
     maxWidth?: string | undefined;
 }, never>;
+export declare const Title: import("styled-components").StyledComponent<"div", any, {
+    maxWidth?: string | undefined;
+}, never>;
 /**
  * The container element into which a plugin renders its html elements.
  * Contains styles for child elements so that plugins can use UI
@@ -97,7 +89,6 @@ export declare function SelectFrom({ values, value, setValue, labels, style, wid
     style?: React.CSSProperties;
     wide?: boolean;
 }): JSX.Element;
-export declare const HoverableTooltip: import("styled-components").StyledComponent<"div", any, {}, never>;
 export declare const CenterRow: import("styled-components").StyledComponent<"div", any, {}, never>;
 /**
  * A box which centers some darkened text. Useful for displaying
@@ -109,20 +100,12 @@ export declare const CenterBackgroundSubtext: import("styled-components").Styled
     height: string;
 }, never>;
 /**
- * A button that also displays a {@code KeyboardBtn} directly next to it, which shows the user
- * whether or not the given shortcut key is down. In the case that now {@code shortcutKey} was
- * provided, this is just a normal button.
+ * Expands to fit the width of container. Is itself a flex box that spreads out its children
+ * horizontally.
  */
-export declare function ShortcutButton(props: {
-    children: React.ReactNode;
-    shortcutKey?: string;
-    shortcutText?: string;
-} & BtnProps): JSX.Element;
-export declare const KeyboardBtn: import("styled-components").StyledComponent<"kbd", any, {
-    active?: boolean | undefined;
-}, never>;
-export declare const CenteredText: import("styled-components").StyledComponent<"span", any, {}, never>;
-export declare function ShortcutKeyDown({ shortcutKey, text }: {
-    shortcutKey?: string;
-    text?: string;
-}): JSX.Element;
+export declare const SpreadApart: import("styled-components").StyledComponent<"div", any, {}, never>;
+/**
+ * Expands to fit the width of container. Is itself a flex box that spreads out its children
+ * horizontally.
+ */
+export declare const Spread: import("styled-components").StyledComponent<"div", any, {}, never>;

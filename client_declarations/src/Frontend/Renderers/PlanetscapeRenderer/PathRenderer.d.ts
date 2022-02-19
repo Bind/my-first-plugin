@@ -1,13 +1,12 @@
-import { PixelCoords } from "../../../Backend/Procedural/ProcgenUtils";
-import { RGBVec } from "../GameRenderer/EngineTypes";
-import AttribManager from "../GameRenderer/WebGL/AttribManager";
-import { WebGLManager } from "../GameRenderer/WebGL/WebGLManager";
+import { PixelCoords } from '../../../Backend/Procedural/ProcgenUtils';
+import { RGBVec } from '../GameRenderer/EngineTypes';
+import { WebGLManager } from '../GameRenderer/WebGL/WebGLManager';
 export declare class PathRenderer {
-    manager: WebGLManager;
-    program: WebGLProgram;
-    matrixULoc: WebGLUniformLocation | null;
-    posA: AttribManager;
-    colorA: AttribManager;
+    private manager;
+    private program;
+    private matrixULoc;
+    private posA;
+    private colorA;
     constructor(manager: WebGLManager);
     drawPath(arr: PixelCoords[], color: RGBVec): void;
 }

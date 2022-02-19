@@ -1,4 +1,5 @@
-import { ModalHook } from '../Views/ModalPane';
-export declare function PlayerArtifactsPane({ hook }: {
-    hook: ModalHook;
+/// <reference types="react" />
+export declare function PlayerArtifactsPane({ visible, onClose, }: {
+    visible: boolean;
+    onClose: () => void;
 }): JSX.Element;

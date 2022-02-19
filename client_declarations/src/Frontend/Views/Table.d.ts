@@ -8,10 +8,11 @@ import React from 'react';
  * @param alignments - optional, one per column, specifies that the text-alignment in that cell is
  * either right, center, or left, represented by the characters 'r', 'c', and 'l'
  */
-export declare function Table<T>({ rows, headers, columns, alignments, headerStyle, }: {
+export declare function Table<T>({ rows, headers, columns, alignments, headerStyle, paginated, }: {
     rows: T[];
     headers: React.ReactNode[];
     columns: Array<(t: T, i: number) => React.ReactNode>;
     alignments?: Array<'r' | 'c' | 'l'>;
     headerStyle?: React.CSSProperties;
+    paginated?: boolean;
 }): JSX.Element;

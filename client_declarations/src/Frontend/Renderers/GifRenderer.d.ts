@@ -1,8 +1,7 @@
+import { SpriteRenderer, WebGLManager } from "@darkforest_eth/renderer";
 import { Artifact, ArtifactRarity, ArtifactType, Biome } from "@darkforest_eth/types";
 import { mat4 } from "gl-matrix";
 import JSZip from "jszip";
-import { SpriteRenderer } from "./GameRenderer/Entities/SpriteRenderer";
-import { WebGLManager } from "./GameRenderer/WebGL/WebGLManager";
 declare global {
     interface Window {
         CCapture: any;

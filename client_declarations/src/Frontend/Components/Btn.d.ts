@@ -1,12 +1,14 @@
+import { DarkForestButton, DarkForestShortcutButton, ShortcutPressedEvent } from '@darkforest_eth/ui';
 import React from 'react';
-export declare type BtnProps = {
-    disabled?: boolean;
-    noBorder?: boolean;
-    wide?: boolean;
-    small?: boolean;
-    color?: string;
-    borderColor?: string;
-    textColor?: string;
-    forceActive?: boolean;
-} & React.HTMLAttributes<HTMLSpanElement>;
-export declare function Btn(props: BtnProps): JSX.Element;
+export { DarkForestButton, DarkForestShortcutButton, ShortcutPressedEvent };
+export declare const Btn: React.ForwardRefExoticComponent<Partial<Omit<DarkForestButton, "children">> & {
+    onClick?: ((e: Event) => unknown) | undefined;
+} & React.HTMLAttributes<HTMLElement> & {
+    children?: React.ReactNode;
+} & React.RefAttributes<unknown>>;
+export declare const ShortcutBtn: React.ForwardRefExoticComponent<Partial<Omit<DarkForestShortcutButton, "children">> & {
+    onClick?: ((e: Event) => unknown) | undefined;
+    onShortcutPressed?: ((e: Event) => unknown) | undefined;
+} & React.HTMLAttributes<HTMLElement> & {
+    children?: React.ReactNode;
+} & React.RefAttributes<unknown>>;

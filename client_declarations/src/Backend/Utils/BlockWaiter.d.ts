@@ -3,8 +3,8 @@
  * schedule again, the previously scheduled function will not be executed.
  */
 export declare class BlockWaiter {
-    private timeout?;
-    private waitThisLong;
+    timeout?: ReturnType<typeof setTimeout>;
+    waitThisLong: number;
     constructor(waitThisLong: number);
     schedule(func: () => void): void;
 }

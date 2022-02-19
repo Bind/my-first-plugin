@@ -1,5 +1,4 @@
-import { WorldCoords } from '@darkforest_eth/types';
-import { Rectangle } from '../../_types/global/GlobalTypes';
+import { Rectangle, WorldCoords } from "@darkforest_eth/types";
 export declare const enum MiningPatternType {
     Home = 0,
     Target = 1,
@@ -7,7 +6,9 @@ export declare const enum MiningPatternType {
     Cone = 3,
     Grid = 4,
     ETH = 5,
-    SwissCheese = 6
+    SwissCheese = 6,
+    TowardsCenter = 7,
+    TowardsCenterV2 = 8
 }
 export interface MiningPattern {
     type: MiningPatternType;
@@ -26,5 +27,26 @@ export declare class SwissCheesePattern implements MiningPattern {
     fromChunk: Rectangle;
     chunkSideLength: number;
     constructor(center: WorldCoords, chunkSize: number);
+    nextChunk(chunk: Rectangle): Rectangle;
+}
+export declare class TowardsCenterPattern implements MiningPattern {
+    type: MiningPatternType;
+    fromChunk: Rectangle;
+    chunkSideLength: number;
+    tipX: number;
+    tipY: number;
+    maxWidth: number;
+    constructor(center: WorldCoords, chunkSize: number);
+    nextChunk(chunk: Rectangle): Rectangle;
+}
+export declare class TowardsCenterPatternV2 implements MiningPattern {
+    type: MiningPatternType;
+    fromChunk: Rectangle;
+    chunkSideLength: number;
+    rowRadius: number;
+    yDominant: boolean;
+    slopeToCenter: number;
+    constructor(center: WorldCoords, chunkSize: number);
+    toChunk(coord: number): number;
     nextChunk(chunk: Rectangle): Rectangle;
 }

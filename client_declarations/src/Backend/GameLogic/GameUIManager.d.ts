@@ -1,16 +1,16 @@
-/// <reference types="react" />
 /// <reference types="node" />
 import { Monomitter } from "@darkforest_eth/events";
-import { PerlinConfig } from "@darkforest_eth/hashing";
 import { EthConnection } from "@darkforest_eth/network";
-import { Artifact, ArtifactId, Biome, Conversation, Diagnostics, EthAddress, LocatablePlanet, LocationId, Planet, PlanetLevel, Player, QueuedArrival, SpaceType, UnconfirmedActivateArtifact, UnconfirmedMove, UnconfirmedUpgrade, Upgrade, UpgradeBranchName, WorldCoords, WorldLocation } from "@darkforest_eth/types";
+import { Renderer } from "@darkforest_eth/renderer";
+import { Artifact, ArtifactId, Biome, Chunk, Diagnostics, EthAddress, LocatablePlanet, LocationId, PerlinConfig, Planet, PlanetLevel, Player, QueuedArrival, Rectangle, Setting, SpaceType, Transaction, UnconfirmedActivateArtifact, UnconfirmedMove, UnconfirmedUpgrade, Upgrade, UpgradeBranchName, WorldCoords, WorldLocation, Wormhole } from "@darkforest_eth/types";
 import { BigNumber } from "ethers";
 import EventEmitter from "events";
+import React from "react";
+import ModalManager from "../../Frontend/Game/ModalManager";
 import Viewport from "../../Frontend/Game/Viewport";
-import { Setting } from "../../Frontend/Utils/SettingsHooks";
 import { TerminalHandle } from "../../Frontend/Views/Terminal";
 import { ContractConstants } from "../../_types/darkforest/api/ContractsAPITypes";
-import { Chunk, HashConfig, Rectangle, Wormhole } from "../../_types/global/GlobalTypes";
+import { HashConfig } from "../../_types/global/GlobalTypes";
 import { MiningPattern } from "../Miner/MiningPatterns";
 import GameManager from "./GameManager";
 import { GameObjects } from "./GameObjects";
@@ -25,9 +25,16 @@ declare class GameUIManager extends EventEmitter {
         [PlanetLevel: number]: number;
     };
     readonly gameManager: GameManager;
+    modalManager: ModalManager;
     terminal: React.MutableRefObject<TerminalHandle | undefined>;
-    previousSelectedPlanet: Planet | undefined;
-    selectedPlanet: LocatablePlanet | undefined;
+    /**
+     * In order to render React on top of the game, we need to insert React nodes into an overlay
+     * container. We keep a reference to this container, so that our React components can optionally
+     * choose to render themselves into this overlay container using React Portals.
+     */
+    overlayContainer?: HTMLDivElement;
+    previousSelectedPlanetId: LocationId | undefined;
+    selectedPlanetId: LocationId | undefined;
     selectedCoords: WorldCoords | undefined;
     mouseDownOverPlanet: LocatablePlanet | undefined;
     mouseDownOverCoords: WorldCoords | undefined;
@@ -36,6 +43,7 @@ declare class GameUIManager extends EventEmitter {
     sendingPlanet: LocatablePlanet | undefined;
     sendingCoords: WorldCoords | undefined;
     isSending: boolean;
+    abandoning: boolean;
     viewportEntities: ViewportEntities;
     /**
      * The Wormhole artifact requires you to choose a target planet. This value
@@ -56,13 +64,25 @@ declare class GameUIManager extends EventEmitter {
     };
     plugins: PluginManager;
     readonly selectedPlanetId$: Monomitter<LocationId | undefined>;
-    readonly selectedPlanet$: Monomitter<Planet | undefined>;
     readonly hoverPlanetId$: Monomitter<LocationId | undefined>;
     readonly hoverPlanet$: Monomitter<Planet | undefined>;
-    readonly selectedArtifactId$: Monomitter<ArtifactId | undefined>;
-    readonly selectedArtifact$: Monomitter<Artifact | undefined>;
+    readonly hoverArtifactId$: Monomitter<ArtifactId | undefined>;
+    readonly hoverArtifact$: Monomitter<Artifact | undefined>;
     readonly myArtifacts$: Monomitter<Map<ArtifactId, Artifact>>;
+    readonly isSending$: Monomitter<boolean>;
+    readonly isAbandoning$: Monomitter<boolean>;
+    planetHoveringInRenderer: boolean;
     constructor(gameManager: GameManager, terminalHandle: React.MutableRefObject<TerminalHandle | undefined>);
+    /**
+     * Sets the overlay container. See {@link GameUIManger.overlayContainer} for more information
+     * about what the overlay container is.
+     */
+    setOverlayContainer(randomContainer?: HTMLDivElement): void;
+    /**
+     * Gets the overlay container. See {@link GameUIManger.overlayContainer} for more information
+     * about what the overlay container is.
+     */
+    getOverlayContainer(): HTMLDivElement | undefined;
     static create(gameManager: GameManager, terminalHandle: React.MutableRefObject<TerminalHandle | undefined>): Promise<GameUIManager>;
     destroy(): void;
     getStringSetting(setting: Setting): string | undefined;
@@ -74,28 +94,27 @@ declare class GameUIManager extends EventEmitter {
     centerPlanet(planet: LocatablePlanet | undefined): void;
     centerCoords(coords: WorldCoords): void;
     centerLocationId(planetId: LocationId): void;
-    joinGame(beforeRetry: (e: Error) => Promise<boolean>): GameUIManager;
+    joinGame(beforeRetry: (e: Error) => Promise<boolean>): Promise<void>;
     addAccount(coords: WorldCoords): Promise<boolean>;
     verifyTwitter(twitter: string): Promise<boolean>;
     disconnectTwitter(twitter: string): Promise<void>;
     getPluginManager(): PluginManager;
-    getPrivateKey(): string | undefined;
+    getKey(): string | undefined;
     getMyBalance(): number;
+    getMyBalanceBn(): BigNumber;
     getMyBalance$(): Monomitter<BigNumber>;
     findArtifact(planetId: LocationId): void;
     prospectPlanet(planetId: LocationId): void;
     withdrawArtifact(locationId: LocationId, artifactId: ArtifactId): void;
     depositArtifact(locationId: LocationId, artifactId: ArtifactId): void;
+    drawAllRunningPlugins(ctx: CanvasRenderingContext2D): void;
     activateArtifact(locationId: LocationId, id: ArtifactId, wormholeTo?: LocationId): void;
     deactivateArtifact(locationId: LocationId, artifactId: ArtifactId): void;
     withdrawSilver(locationId: LocationId, amount: number): void;
     startWormholeFrom(planet: LocatablePlanet): Promise<LocatablePlanet | undefined>;
     revealLocation(locationId: LocationId): void;
-    claimLocation(locationId: LocationId): void;
     getNextBroadcastAvailableTimestamp(): number;
-    getConversation(artifactId: ArtifactId): Promise<Conversation | undefined>;
-    startConversation(artifactId: ArtifactId): Promise<Conversation>;
-    stepConversation(artifactId: ArtifactId, message: string): Promise<Conversation>;
+    timeUntilNextBroadcastAvailable(): number;
     getEnergyArrivingForMove(from: LocationId, to: LocationId | undefined, dist: number | undefined, energy: number): number;
     getIsChoosingTargetPlanet(): boolean;
     onMouseDown(coords: WorldCoords): void;
@@ -109,6 +128,8 @@ declare class GameUIManager extends EventEmitter {
     toggleTargettingExplorer(): void;
     setForcesSending(planetId: LocationId, percentage: number): void;
     setSilverSending(planetId: LocationId, percentage: number): void;
+    setSending(sending: boolean): void;
+    setAbandoning(abandoning: boolean): void;
     setArtifactSending(planetId: LocationId, artifact?: Artifact): void;
     isOwnedByMe(planet: Planet): boolean;
     addNewChunk(chunk: Chunk): void;
@@ -117,6 +138,7 @@ declare class GameUIManager extends EventEmitter {
     getMiningPattern(): MiningPattern | undefined;
     isMining(): boolean;
     getAccount(): EthAddress | undefined;
+    isAdmin(): boolean;
     getTwitter(address: EthAddress | undefined): string | undefined;
     getEndTimeSeconds(): number;
     isRoundOver(): boolean;
@@ -133,6 +155,7 @@ declare class GameUIManager extends EventEmitter {
     getSelectedCoords(): WorldCoords | undefined;
     getMouseDownPlanet(): LocatablePlanet | undefined;
     onSendInit(planet: LocatablePlanet | undefined): void;
+    onSendComplete(locationId: LocationId): void;
     onSendCancel(): void;
     hasMinedChunk(chunkLocation: Rectangle): boolean;
     getChunk(chunkFootprint: Rectangle): Chunk | undefined;
@@ -145,49 +168,58 @@ declare class GameUIManager extends EventEmitter {
     removeExtraMinerLocation(idx: number): void;
     getAllMinerLocations(): WorldCoords[];
     getMouseDownCoords(): WorldCoords | undefined;
-    setHoveringOverPlanet(planet: LocatablePlanet | undefined): void;
+    setHoveringOverPlanet(planet: LocatablePlanet | undefined, inRenderer: boolean): void;
+    setHoveringOverArtifact(artifactId?: ArtifactId): void;
     getHoveringOverPlanet(): Planet | undefined;
     getHoveringOverCoords(): WorldCoords | undefined;
+    isSendingForces(): boolean;
     /**
      * Percent from 0 to 100.
      */
-    getForcesSending(planetId: LocationId): number;
+    getForcesSending(planetId?: LocationId): number;
     /**
      * Percent from 0 to 100.
      */
-    getSilverSending(planetId: LocationId): number;
-    getArtifactSending(planetId: LocationId): Artifact | undefined;
+    getSilverSending(planetId?: LocationId): number;
+    isAbandoning(): boolean;
+    getArtifactSending(planetId?: LocationId): Artifact | undefined;
+    getAbandonSpeedChangePercent(): number;
+    getAbandonRangeChangePercent(): number;
+    isSendingShip(planetId?: LocationId): boolean;
     isOverOwnPlanet(coords: WorldCoords): Planet | undefined;
     getMyArtifacts(): Artifact[];
     getMyArtifactsNotOnPlanet(): Artifact[];
     getPlanetWithId(planetId: LocationId | undefined): Planet | undefined;
     getMyScore(): number | undefined;
     getPlayer(address?: EthAddress): Player | undefined;
-    getArtifactWithId(artifactId: ArtifactId): Artifact | undefined;
+    getArtifactWithId(artifactId: ArtifactId | undefined): Artifact | undefined;
     getPlanetWithCoords(coords: WorldCoords | undefined): Planet | undefined;
-    getArtifactsWithIds(artifactIds: ArtifactId[]): Array<Artifact | undefined>;
+    getArtifactsWithIds(artifactIds?: ArtifactId[]): Array<Artifact | undefined>;
     getArtifactPlanet(artifact: Artifact): Planet | undefined;
     getPlanetLevel(planetId: LocationId): PlanetLevel | undefined;
     getAllOwnedPlanets(): Planet[];
     getAllVoyages(): QueuedArrival[];
+    getSpeedBuff(): number;
+    getRangeBuff(): number;
     /**
      * @todo delete this. now that {@link GameObjects} is publically accessible, we shouldn't need to
      * drill fields like this anymore.
      * @tutorial Plugin developers, please access fields like this with something like {@code df.getGameObjects().}
      * @deprecated
      */
-    getUnconfirmedMoves(): UnconfirmedMove[];
-    getUnconfirmedUpgrades(): UnconfirmedUpgrade[];
+    getUnconfirmedMoves(): Transaction<UnconfirmedMove>[];
+    getUnconfirmedUpgrades(): Transaction<UnconfirmedUpgrade>[];
     isCurrentlyRevealing(): boolean;
-    isCurrentlyClaiming(): boolean;
-    getUnconfirmedWormholeActivations(): UnconfirmedActivateArtifact[];
+    getUnconfirmedWormholeActivations(): Transaction<UnconfirmedActivateArtifact>[];
     getWormholes(): Iterable<Wormhole>;
     getLocationOfPlanet(planetId: LocationId): WorldLocation | undefined;
     getExploredChunks(): Iterable<Chunk>;
     getLocationsAndChunks(): {
         chunks: Set<Chunk>;
-        cachedPlanets: Map<LocationId, import("./ViewportEntities").PlanetRenderInfo>;
+        cachedPlanets: Map<LocationId, import("@darkforest_eth/types").PlanetRenderInfo>;
     };
+    getCaptureZones(): Set<import("@darkforest_eth/types").CaptureZone>;
+    getCaptureZoneGenerator(): import("./CaptureZoneGenerator").CaptureZoneGenerator;
     getIsHighPerfMode(): boolean;
     getPlanetsInViewport(): Planet[];
     getWorldRadius(): number;
@@ -198,10 +230,6 @@ declare class GameUIManager extends EventEmitter {
     getPlayerScore(player: EthAddress): number | undefined;
     upgrade(planet: Planet, branch: number): void;
     buyHat(planet: Planet): void;
-    buyGPTCredits(amount: number): void;
-    getGptCreditPriceEmitter(): Monomitter<number>;
-    getGptCreditBalanceEmitter(): Monomitter<number>;
-    getIsBuyingCreditsEmitter(): Monomitter<boolean>;
     getHomeCoords(): WorldCoords;
     getHomeHash(): LocationId | undefined;
     getHomePlanet(): Planet | undefined;
@@ -218,7 +246,11 @@ declare class GameUIManager extends EventEmitter {
     getMyPlanetMap(): Map<LocationId, Planet>;
     getMyArtifactMap(): Map<ArtifactId, Artifact>;
     getTerminal(): TerminalHandle | undefined;
-    getContractConstants(): ContractConstants;
+    get contractConstants(): ContractConstants;
+    getSpaceJunkEnabled(): boolean;
+    get captureZonesEnabled(): boolean;
+    potentialCaptureScore(planetLevel: number): number;
+    getDefaultSpaceJunkForPlanetLevel(level: number): number;
     getPerlinConfig(isBiome?: boolean): PerlinConfig;
     /**
      * Gets a reference to the game's internal representation of the world state. Beware! Use this for
@@ -231,5 +263,18 @@ declare class GameUIManager extends EventEmitter {
     onEmitInitializedPlayer(): void;
     onEmitInitializedPlayerError(err: React.ReactNode): void;
     getGameManager(): GameManager;
+    setModalManager(modalManager: ModalManager): void;
+    getModalManager(): ModalManager;
+    /**
+     * If there is a planet being hovered over, returns whether or not it's being hovered
+     * over in the renderer.
+     */
+    getPlanetHoveringInRenderer(): boolean;
+    getRenderer(): Renderer | null;
+    getPaused(): boolean;
+    getPaused$(): Monomitter<boolean>;
+    getSilverScoreValue(): number;
+    getArtifactPointValues(): import("@darkforest_eth/types").ArtifactPointValues;
+    getCaptureZonePointValues(): [number, number, number, number, number, number, number, number, number, number];
 }
 export default GameUIManager;

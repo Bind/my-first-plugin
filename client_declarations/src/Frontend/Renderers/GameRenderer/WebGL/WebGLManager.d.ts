@@ -1,10 +1,10 @@
-import { mat4 } from "gl-matrix";
-import { RGBAVec } from "../EngineTypes";
+import { mat4 } from 'gl-matrix';
+import { RGBAVec } from '../EngineTypes';
 export declare class WebGLManager {
     gl: WebGL2RenderingContext;
     projectionMatrix: mat4;
     canvas: HTMLCanvasElement;
-    texIdx: number;
+    private texIdx;
     constructor(canvas: HTMLCanvasElement, attr?: WebGLContextAttributes);
     setProjectionMatrix(): void;
     clear(bits?: number, color?: RGBAVec): void;

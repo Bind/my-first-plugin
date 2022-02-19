@@ -1,10 +1,8 @@
 import { Monomitter } from "@darkforest_eth/events";
-import { Abstract, ArrivalWithTimer, Artifact, ArtifactId, Biome, ClaimedLocation, EthAddress, LocatablePlanet, LocationId, Planet, PlanetLevel, PlanetType, QueuedArrival, RevealedLocation, SpaceType, TxIntent, UnconfirmedActivateArtifact, UnconfirmedBuyGPTCredits, UnconfirmedBuyHat, UnconfirmedClaim, UnconfirmedMove, UnconfirmedPlanetTransfer, UnconfirmedReveal, UnconfirmedUpgrade, VoyageId, WorldCoords, WorldLocation } from "@darkforest_eth/types";
+import { Abstract, ArrivalWithTimer, Artifact, ArtifactId, Biome, Chunk, ClaimedLocation, EthAddress, LocatablePlanet, LocationId, Planet, PlanetLevel, PlanetType, QueuedArrival, Radii, RevealedLocation, SpaceType, Transaction, TransactionCollection, VoyageId, WorldCoords, WorldLocation, Wormhole } from "@darkforest_eth/types";
 import { ContractConstants } from "../../_types/darkforest/api/ContractsAPITypes";
-import { Chunk, Wormhole } from "../../_types/global/GlobalTypes";
 import { PlanetDiff } from "./ArrivalUtils";
 import { LayeredMap } from "./LayeredMap";
-import { Radii } from "./ViewportEntities";
 declare type CoordsString = Abstract<string, "CoordString">;
 /**
  * Representation of the objects which exist in the world.
@@ -106,27 +104,9 @@ export declare class GameObjects {
      */
     readonly coordsToLocation: Map<CoordsString, WorldLocation>;
     /**
-     * The following set of fields represent actions which the user has initiated on the blockchain,
-     * and have not yet completed. The nature of the blockchain is that transactions could take up to
-     * several minutes to confirm (depending on network congestion). This means that we need to make
-     * it clear to players that the action that they have initiated is indeed in progress, and that
-     * something is actually happening. See `Prospect.tsx` for example.
-     *
-     * The storage and retrieval of unconfirmed transactions could, and
-     * probablu should be abstracted into some sort of class which keeps in sync both *these* fields
-     * and each of these fields counterparts in their corresponding entity objects (Planet, Artifact,
-     * etc.)
-     *
-     * @todo these are good candidates for being in the `PlayerInfo` class.
+     * Transactions that are currently in flight.
      */
-    unconfirmedReveal?: UnconfirmedReveal;
-    unconfirmedBuyGPTCredits?: UnconfirmedBuyGPTCredits;
-    unconfirmedClaim?: UnconfirmedClaim;
-    readonly unconfirmedMoves: Record<string, UnconfirmedMove>;
-    readonly unconfirmedUpgrades: Record<string, UnconfirmedUpgrade>;
-    readonly unconfirmedBuyHats: Record<string, UnconfirmedBuyHat>;
-    readonly unconfirmedPlanetTransfers: Record<string, UnconfirmedPlanetTransfer>;
-    readonly unconfirmedWormholeActivations: UnconfirmedActivateArtifact[];
+    readonly transactions: TransactionCollection;
     /**
      * Event emitter which publishes whenever a planet is updated.
      */
@@ -148,16 +128,9 @@ export declare class GameObjects {
      * {@link GameObjects.myPlanetsUpdated$} for more info.
      */
     readonly myArtifactsUpdated$: Monomitter<Map<ArtifactId, Artifact>>;
-    /**
-     * Event emitter which publishes whenever the player begins and finishes (whether with a success
-     * or an error) buying gpt credits.
-     *
-     * @todo move into `PlayerInfo`
-     */
-    readonly isBuyingCredits$: Monomitter<boolean>;
     constructor(address: EthAddress | undefined, touchedPlanets: Map<LocationId, Planet>, allTouchedPlanetIds: Set<LocationId>, revealedLocations: Map<LocationId, RevealedLocation>, claimedLocations: Map<LocationId, ClaimedLocation>, artifacts: Map<ArtifactId, Artifact>, allChunks: Iterable<Chunk>, unprocessedArrivals: Map<VoyageId, QueuedArrival>, unprocessedPlanetArrivalIds: Map<LocationId, VoyageId[]>, contractConstants: ContractConstants, worldRadius: number);
-    getIsBuyingCreditsEmitter(): Monomitter<boolean>;
-    getArtifactById(artifactId: ArtifactId): Artifact | undefined;
+    getWormholes(): Iterable<Wormhole>;
+    getArtifactById(artifactId?: ArtifactId): Artifact | undefined;
     getArtifactsOwnedBy(addr: EthAddress): Artifact[];
     getPlanetArtifacts(planetId: LocationId): Artifact[];
     getArtifactsOnPlanetsOwnedBy(addr: EthAddress): Artifact[];
@@ -175,11 +148,16 @@ export declare class GameObjects {
      */
     updatePlanet(id: LocationId, updateFn: (p: Planet) => void): void;
     /**
+     * Given a planet id, update the state of the given planet by calling the given update function.
+     * If the planet was updated, then also publish the appropriate event.
+     */
+    updateArtifact(id: ArtifactId | undefined, updateFn: (p: Artifact) => void): void;
+    /**
      * received some planet data from the contract. update our stores
      */
     replacePlanetFromContractData(planet: Planet, updatedArrivals?: QueuedArrival[], updatedArtifactsOnPlanet?: ArtifactId[], revealedLocation?: RevealedLocation, claimerEthAddress?: EthAddress): void;
     getPlanetWithCoords(coords: WorldCoords): LocatablePlanet | undefined;
-    getPlanetWithLocation(location: WorldLocation): Planet | undefined;
+    getPlanetWithLocation(location: WorldLocation | undefined): Planet | undefined;
     isPlanetInContract(planetId: LocationId): boolean;
     /**
      * Called when we load chunk data into memory (on startup), when we're loading all revealed locations (on startup),
@@ -239,8 +217,11 @@ export declare class GameObjects {
      *
      * Whenever we update an entity, we must do it via that entity's type's corresponding
      * `set<EntityType>` function, in order for us to publish these events.
+     *
+     * @todo: this entire function could be automated by implementing a new interface called
+     * {@code TxFilter}.
      */
-    onTxIntent(txIntent: TxIntent): void;
+    onTxIntent(tx: Transaction): void;
     /**
      * Whenever a transaction that the user initiated either succeeds or fails, we need to clear the
      * fact that it was in progress from the event's corresponding entities. For example, whenever a
@@ -251,14 +232,7 @@ export declare class GameObjects {
      *
      * @todo Make this less tedious.
      */
-    clearUnconfirmedTxIntent(txIntent: TxIntent): void;
-    getUnconfirmedMoves(): UnconfirmedMove[];
-    getUnconfirmedWormholeActivations(): UnconfirmedActivateArtifact[];
-    getWormholes(): Iterable<Wormhole>;
-    getUnconfirmedUpgrades(): UnconfirmedUpgrade[];
-    getUnconfirmedReveal(): UnconfirmedReveal | undefined;
-    getUnconfirmedClaim(): UnconfirmedClaim | undefined;
-    getUnconfirmedBuyGPTCredits(): UnconfirmedBuyGPTCredits | undefined;
+    clearUnconfirmedTxIntent(tx: Transaction): void;
     getPlanetMap(): Map<LocationId, Planet>;
     getArtifactMap(): Map<ArtifactId, Artifact>;
     getMyPlanetMap(): Map<LocationId, Planet>;
@@ -281,6 +255,7 @@ export declare class GameObjects {
      * the `planetLevels` parameter. Fast because it uses {@link LayeredMap}.
      */
     getPlanetsInWorldRectangle(worldX: number, worldY: number, worldWidth: number, worldHeight: number, levels: number[], planetLevelToRadii: Map<number, Radii>, updateIfStale?: boolean): LocatablePlanet[];
+    forceTick(locationId: LocationId): void;
     /**
      * Set a planet into our cached store. Should ALWAYS call this when setting a planet.
      * `this.planets` and `this.myPlanets` should NEVER be accessed directly!
@@ -299,6 +274,7 @@ export declare class GameObjects {
      * Emit notifications based on a planet's state change
      */
     emitArrivalNotifications({ previous, current, arrival }: PlanetDiff): void;
+    removeArrival(planetId: LocationId, arrivalId: VoyageId): void;
     processArrivalsForPlanet(planetId: LocationId, arrivals: QueuedArrival[]): ArrivalWithTimer[];
     clearOldArrivals(planet: Planet): void;
     planetLevelFromHexPerlin(hex: LocationId, perlin: number): PlanetLevel;
@@ -332,7 +308,13 @@ export declare class GameObjects {
      * if the artifact is not on either, then it is the owner of the artifact NFT
      */
     getArtifactController(artifactId: ArtifactId): EthAddress | undefined;
-    calculateSilverSpent(planet: Planet): number;
-    updateScore(planetId: LocationId): void;
+    /**
+     * Get all of the incoming voyages for a given location.
+     */
+    getArrivalIdsForLocation(location: LocationId | undefined): VoyageId[] | undefined;
+    /**
+     * Whether or not we're already asking the game to give us spaceships.
+     */
+    isGettingSpaceships(): boolean;
 }
 export {};

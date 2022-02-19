@@ -1,6 +1,5 @@
-export declare const enum InitRenderState {
-    NONE = 0,
-    LOADING = 1,
-    COMPLETE = 2
-}
-export declare function GameLandingPage(): JSX.Element;
+/// <reference types="react" />
+import { RouteComponentProps } from 'react-router-dom';
+export declare function GameLandingPage({ match }: RouteComponentProps<{
+    contract: string;
+}>): JSX.Element;

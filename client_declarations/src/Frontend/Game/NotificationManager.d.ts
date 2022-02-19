@@ -1,8 +1,7 @@
 /// <reference types="node" />
-import { Artifact, EthTxStatus, LocatablePlanet, Planet, SubmittedTx, TxIntent } from '@darkforest_eth/types';
+import { Artifact, Chunk, ContractMethodName, EthTxStatus, LocatablePlanet, Planet, TxIntent } from '@darkforest_eth/types';
 import EventEmitter from 'events';
 import React from 'react';
-import { Chunk } from '../../_types/global/GlobalTypes';
 export declare const enum NotificationType {
     Tx = 0,
     CanUpgrade = 1,
@@ -34,7 +33,8 @@ export declare const enum NotificationType {
     ArtifactProspected = 27,
     ArtifactFound = 28,
     ReceivedPlanet = 29,
-    Generic = 30
+    Generic = 30,
+    TxInitError = 31
 }
 export declare type NotificationInfo = {
     type: NotificationType;
@@ -46,20 +46,17 @@ export declare type NotificationInfo = {
     txStatus?: EthTxStatus;
 };
 export declare const enum NotificationManagerEvent {
-    Notify = "Notify"
+    Notify = "Notify",
+    ClearNotification = "ClearNotification"
 }
 declare class NotificationManager extends EventEmitter {
     static instance: NotificationManager;
     private constructor();
     static getInstance(): NotificationManager;
     private getIcon;
+    reallyLongNotification(): void;
+    clearNotification(id: string): void;
     notify(type: NotificationType, message: React.ReactNode): void;
-    notifyTx(txData: TxIntent, message: React.ReactNode, txStatus: EthTxStatus): void;
-    txInit(txIntent: TxIntent): void;
-    txSubmit(tx: SubmittedTx): void;
-    txConfirm(tx: SubmittedTx): void;
-    unsubmittedTxFail(txIntent: TxIntent, _e: Error): void;
-    txRevert(tx: SubmittedTx): void;
     welcomePlayer(): void;
     foundSpace(chunk: Chunk): void;
     foundDeepSpace(chunk: Chunk): void;
@@ -79,5 +76,6 @@ declare class NotificationManager extends EventEmitter {
     planetCanUpgrade(planet: Planet): void;
     balanceEmpty(): void;
     receivedPlanet(planet: Planet): void;
+    txInitError(methodName: ContractMethodName, failureReason: string): void;
 }
 export default NotificationManager;

@@ -1,3 +1,4 @@
+/// <reference types="react" />
 import { Callback, Monomitter } from '@darkforest_eth/events';
 import { Wrapper } from '../../Backend/Utils/Wrapper';
 /**
@@ -5,7 +6,7 @@ import { Wrapper } from '../../Backend/Utils/Wrapper';
  * @param emitter `Monomitter` to subscribe to
  * @param callback callback to subscribe
  */
-export declare function useEmitterSubscribe<T>(emitter: Monomitter<T>, callback: Callback<T>): void;
+export declare function useEmitterSubscribe<T>(emitter: Monomitter<T>, callback: Callback<T>, deps: React.DependencyList): void;
 /**
  * Use returned value from an emitter
  * @param emitter `Monomitter` to subscribe to

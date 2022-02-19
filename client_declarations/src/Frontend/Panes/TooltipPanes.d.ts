@@ -1,4 +1,17 @@
-import { TooltipName } from '../Game/WindowManager';
+/// <reference types="react" />
+import { TooltipName } from '@darkforest_eth/types';
+export declare function NetworkHealthPane(): JSX.Element;
+export declare function WithdrawSilverButton(): JSX.Element;
+export declare function DefenseMultiplierPane(): JSX.Element;
+export declare function EnergyCapMultiplierPane(): JSX.Element;
+export declare function EnergyGrowthMultiplierPane(): JSX.Element;
+export declare function RangeMultiplierPane(): JSX.Element;
+export declare function SpeedMultiplierPane(): JSX.Element;
+export declare function DepositArtifactPane(): JSX.Element;
+export declare function DeactivateArtifactPane(): JSX.Element;
+export declare function WithdrawArtifactPane(): JSX.Element;
+export declare function ActivateArtifactPane(): JSX.Element;
+export declare function TimeUntilActivationPossiblePane(): JSX.Element;
 export declare function TwitterHandleTooltipPane(): JSX.Element;
 export declare function RankTooltipPane(): JSX.Element;
 export declare function ScoreTooltipPane(): JSX.Element;
@@ -33,7 +46,8 @@ export declare function BonusEnergyGroTooltipPane(): JSX.Element;
 export declare function BonusRangeTooltipPane(): JSX.Element;
 export declare function BonusSpeedTooltipPane(): JSX.Element;
 export declare function BonusDefenseTooltipPane(): JSX.Element;
+export declare function BonusSpaceJunkTooltipPane(): JSX.Element;
 export declare function ClowntownTooltipPane(): JSX.Element;
 export declare function TooltipContent({ name }: {
-    name: TooltipName;
+    name: TooltipName | undefined;
 }): JSX.Element;

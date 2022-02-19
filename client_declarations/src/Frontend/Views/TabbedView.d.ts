@@ -4,7 +4,8 @@ import React from 'react';
  * by clicking on its corresponding tab button. Useful for displaying lots of slightly different but
  * related information to the user.
  */
-export declare function TabbedView({ tabTitles, tabContents, }: {
+export declare function TabbedView({ tabTitles, tabContents, style, }: {
     tabTitles: string[];
     tabContents: (tabIndex: number) => React.ReactNode;
+    style?: React.CSSProperties;
 }): JSX.Element;

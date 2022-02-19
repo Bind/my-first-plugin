@@ -1,6 +1,5 @@
-import { WorldCoords } from '@darkforest_eth/types';
+import { Chunk, Rectangle, WorldCoords } from '@darkforest_eth/types';
 import { BucketId, ChunkId, PersistedChunk } from '../../_types/darkforest/api/ChunkStoreTypes';
-import { Chunk, Rectangle } from '../../_types/global/GlobalTypes';
 /**
  * Deterministically assigns a bucket ID to a rectangle, based on its position and size in the
  * universe. This is kind of like a shitty hash function. Its purpose is to distribute chunks

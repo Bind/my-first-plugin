@@ -1,4 +1,4 @@
-import { PluginId } from './SerializedPlugin';
+import { PluginId } from '@darkforest_eth/types';
 /**
  * This interface represents an embedded plugin, which is stored in `embedded_plugins/`.
  */
@@ -7,7 +7,7 @@ export interface EmbeddedPlugin {
     name: string;
     code: string;
 }
-export declare function getEmbeddedPlugins(): {
+export declare function getEmbeddedPlugins(isAdmin: boolean): {
     id: PluginId;
     name: string;
     code: string;

@@ -3,7 +3,8 @@ import { EventEmitter } from "events";
 import { Contract, providers } from "ethers";
 import { EthTxType } from "@darkforest_eth/types";
 import EthConnection from "./EthConnection";
-import { DiagnosticUpdater } from "../Interfaces/DiagnosticUpdater";
+import { ThrottledConcurrentQueue } from "./ThrottledConcurrentQueue";
+import UIStateStorageManager from "../Storage/UIStateStorageManager";
 export interface QueuedTxRequest {
     onSubmissionError: (e: Error) => void;
     onReceiptError: (e: Error) => void;
@@ -24,28 +25,27 @@ export declare class TxExecutor extends EventEmitter {
      * tx is considered to have errored if haven't successfully
      * submitted to mempool within 30s
      */
-    private static readonly TX_SUBMIT_TIMEOUT;
+    static readonly TX_SUBMIT_TIMEOUT = 30000;
     /**
      * we refresh the nonce if it hasn't been updated in this amount of time
      */
-    private static readonly NONCE_STALE_AFTER_MS;
+    static readonly NONCE_STALE_AFTER_MS: number;
     /**
      * don't allow users to submit txs if balance falls below
      */
-    private static readonly MIN_BALANCE_ETH;
-    private txQueue;
-    private lastTransaction;
-    private nonce;
-    private eth;
-    private diagnosticsUpdater?;
-    constructor(ethConnection: EthConnection, nonce: number);
+    static readonly MIN_BALANCE_ETH = 0.002;
+    txQueue: ThrottledConcurrentQueue;
+    lastTransaction: number;
+    nonce: number;
+    eth: EthConnection;
+    uiStateStorageManager: UIStateStorageManager;
+    constructor(ethConnection: EthConnection, uiStateStorageManager: UIStateStorageManager, nonce: number);
     /**
      * Schedules this transaction to execute once all of the transactions
      * ahead of it have completed.
      */
     makeRequest<T, U>(type: EthTxType, actionId: string, contract: Contract, args: unknown[], overrides?: providers.TransactionRequest): PendingTransaction;
-    private maybeUpdateNonce;
-    private checkBalance;
-    private execute;
-    setDiagnosticUpdater(diagnosticUpdater?: DiagnosticUpdater): void;
+    maybeUpdateNonce(): Promise<void>;
+    checkBalance(): Promise<void>;
+    execute: (txRequest: QueuedTxRequest) => Promise<void>;
 }

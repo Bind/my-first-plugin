@@ -1,7 +1,5 @@
-/// <reference types="react" />
 import { EthConnection } from "@darkforest_eth/network";
 import { ArtifactId, Biome, EthAddress, LocatablePlanet, LocationId, Planet, SpaceType, WorldLocation } from "@darkforest_eth/types";
-import { TerminalHandle } from "../../Frontend/Views/Terminal";
 import { ContractConstants } from "../../_types/darkforest/api/ContractsAPITypes";
 import { AddressTwitterMap } from "../../_types/darkforest/api/UtilityServerAPITypes";
 import { ContractsAPI } from "../GameLogic/ContractsAPI";
@@ -9,6 +7,14 @@ import PersistentChunkStore from "./PersistentChunkStore";
 export declare const enum SinglePlanetDataStoreEvent {
     REFRESHED_PLANET = "REFRESHED_PLANET",
     REFRESHED_ARTIFACT = "REFRESHED_ARTIFACT"
+}
+interface ReaderDataStoreConfig {
+    contractAddress: EthAddress;
+    viewer: EthAddress | undefined;
+    addressTwitterMap: AddressTwitterMap;
+    contractConstants: ContractConstants;
+    contractsAPI: ContractsAPI;
+    persistentChunkStore: PersistentChunkStore | undefined;
 }
 /**
  * A data store that allows you to retrieve data from the contract,
@@ -21,9 +27,13 @@ declare class ReaderDataStore {
     readonly contractConstants: ContractConstants;
     readonly contractsAPI: ContractsAPI;
     readonly persistentChunkStore: PersistentChunkStore | undefined;
-    constructor(viewer: EthAddress | undefined, addressTwitterMap: AddressTwitterMap, contractConstants: ContractConstants, contractsAPI: ContractsAPI, persistentChunkStore: PersistentChunkStore | undefined);
+    constructor({ viewer, addressTwitterMap, contractConstants, contractsAPI, persistentChunkStore, }: ReaderDataStoreConfig);
     destroy(): void;
-    static create(terminal: React.MutableRefObject<TerminalHandle | undefined>, ethConnection: EthConnection, viewer: EthAddress | undefined): Promise<ReaderDataStore>;
+    static create({ connection, viewer, contractAddress, }: {
+        connection: EthConnection;
+        viewer: EthAddress | undefined;
+        contractAddress: EthAddress;
+    }): Promise<ReaderDataStore>;
     getViewer(): EthAddress | undefined;
     getTwitter(owner: EthAddress | undefined): string | undefined;
     setPlanetLocationIfKnown(planet: Planet): void;

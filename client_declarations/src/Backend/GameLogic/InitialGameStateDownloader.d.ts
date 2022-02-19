@@ -8,23 +8,21 @@ export interface InitialGameState {
     contractConstants: ContractConstants;
     players: Map<string, Player>;
     worldRadius: number;
-    gptCreditPriceEther: number;
-    myGPTCredits: number;
     allTouchedPlanetIds: LocationId[];
     allRevealedCoords: RevealedCoords[];
-    allClaimedCoords: ClaimedCoords[];
+    allClaimedCoords?: ClaimedCoords[];
     pendingMoves: QueuedArrival[];
     touchedAndLocatedPlanets: Map<LocationId, Planet>;
     artifactsOnVoyages: Artifact[];
     myArtifacts: Artifact[];
     heldArtifacts: Artifact[][];
     loadedPlanets: LocationId[];
-    balance: number;
     revealedCoordsMap: Map<LocationId, RevealedCoords>;
-    claimedCoordsMap: Map<LocationId, ClaimedCoords>;
+    claimedCoordsMap?: Map<LocationId, ClaimedCoords>;
     planetVoyageIdMap: Map<LocationId, VoyageId[]>;
     arrivals: Map<VoyageId, QueuedArrival>;
     twitters: AddressTwitterMap;
+    paused: boolean;
 }
 export declare class InitialGameStateDownloader {
     terminal: TerminalHandle;

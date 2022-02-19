@@ -1,7 +1,8 @@
+/// <reference types="react" />
 import { EthConnection } from '@darkforest_eth/network';
-import { ModalHook } from '../Views/ModalPane';
-export declare function SettingsPane({ ethConnection, hook, privateHook, }: {
+export declare function SettingsPane({ ethConnection, visible, onClose, onOpenPrivate, }: {
     ethConnection: EthConnection;
-    hook: ModalHook;
-    privateHook: ModalHook;
+    visible: boolean;
+    onClose: () => void;
+    onOpenPrivate: () => void;
 }): JSX.Element;

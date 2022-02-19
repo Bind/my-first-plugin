@@ -1,13 +1,16 @@
-import { ClaimedCoords, DiagnosticUpdater, EthAddress, LocationId, RevealedCoords, SubmittedTx, WorldLocation } from "@darkforest_eth/types";
+import { Chunk, ClaimedCoords, DiagnosticUpdater, EthAddress, LocationId, ModalId, ModalPosition, PersistedTransaction, Rectangle, RevealedCoords, Transaction, WorldLocation } from "@darkforest_eth/types";
 import { IDBPDatabase } from "idb";
 import { ChunkId, ChunkStore } from "../../_types/darkforest/api/ChunkStoreTypes";
-import { Chunk, Rectangle } from "../../_types/global/GlobalTypes";
 import { SerializedPlugin } from "../Plugins/SerializedPlugin";
 declare const enum ObjectStore {
     DEFAULT = "default",
     BOARD = "knownBoard",
     UNCONFIRMED_ETH_TXS = "unminedEthTxs",
-    PLUGINS = "plugins"
+    PLUGINS = "plugins",
+    /**
+     * Store modal positions so that we can keep modal panes open across sessions.
+     */
+    MODAL_POS = "modalPositions"
 }
 declare const enum DBActionType {
     UPDATE = 0,
@@ -23,6 +26,12 @@ interface DebouncedFunc<T extends () => void> {
     (...args: Parameters<T>): ReturnType<T> | undefined;
     cancel(): void;
 }
+interface PersistentChunkStoreConfig {
+    db: IDBPDatabase;
+    contractAddress: EthAddress;
+    account: EthAddress;
+}
+export declare const MODAL_POSITIONS_KEY = "modal_positions";
 declare class PersistentChunkStore implements ChunkStore {
     diagnosticUpdater?: DiagnosticUpdater;
     db: IDBPDatabase;
@@ -32,9 +41,16 @@ declare class PersistentChunkStore implements ChunkStore {
     chunkMap: Map<ChunkId, Chunk>;
     confirmedTxHashes: Set<string>;
     account: EthAddress;
-    constructor(db: IDBPDatabase, account: EthAddress);
+    contractAddress: EthAddress;
+    constructor({ db, account, contractAddress }: PersistentChunkStoreConfig);
     destroy(): void;
-    static create(account: EthAddress): Promise<PersistentChunkStore>;
+    /**
+     * NOTE! if you're creating a new object store, it will not be *added* to existing dark forest
+     * accounts. This creation code runs once per account. Therefore, if you're adding a new object
+     * store, and need to test it out, you must either clear the indexed db databse for this account,
+     * or create a brand new account.
+     */
+    static create({ account, contractAddress, }: Omit<PersistentChunkStoreConfig, "db">): Promise<PersistentChunkStore>;
     setDiagnosticUpdater(diagnosticUpdater?: DiagnosticUpdater): void;
     /**
      * Important! This sets the key in indexed db per account and per contract. This means the same
@@ -103,10 +119,21 @@ declare class PersistentChunkStore implements ChunkStore {
     getMinedSubChunks(chunk: Chunk): Chunk[];
     recomputeSaveThrottleAfterUpdate(): void;
     allChunks(): Iterable<Chunk>;
-    onEthTxSubmit(tx: SubmittedTx): Promise<void>;
+    /**
+     * Whenever a transaction is submitted, it is persisted. When the transaction either fails or
+     * succeeds, it is un-persisted. The reason we persist submitted transactions is to be able to
+     * wait for them upon a fresh start of the game if you close the game before a transaction
+     * confirms.
+     */
+    onEthTxSubmit(tx: Transaction): Promise<void>;
+    /**
+     * Partner function to {@link PersistentChunkStore#onEthTxSubmit}
+     */
     onEthTxComplete(txHash: string): Promise<void>;
-    getUnconfirmedSubmittedEthTxs(): Promise<SubmittedTx[]>;
+    getUnconfirmedSubmittedEthTxs(): Promise<PersistedTransaction[]>;
     loadPlugins(): Promise<SerializedPlugin[]>;
     savePlugins(plugins: SerializedPlugin[]): Promise<void>;
+    saveModalPositions(modalPositions: Map<ModalId, ModalPosition>): Promise<void>;
+    loadModalPositions(): Promise<Map<ModalId, ModalPosition>>;
 }
 export default PersistentChunkStore;

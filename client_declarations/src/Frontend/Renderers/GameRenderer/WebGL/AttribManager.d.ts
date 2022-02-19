@@ -1,5 +1,4 @@
-import { AttribProps } from "../EngineTypes";
-import { AttribArray } from "./AttribArray";
+import { AttribProps } from '../EngineTypes';
 /**
  * Responsible for queuing data about a webgl attribute and then writing to it.
  * Does this by maintaining a persistent AttribArray and WebGLBuffer reference,
@@ -10,23 +9,23 @@ export default class AttribManager {
     /**
      * The WebGL rendering context.
      */
-    gl: WebGL2RenderingContext;
+    private gl;
     /**
      * AttribProps object for this attribute, containing name, dimension, and more.
      */
-    props: AttribProps;
+    private props;
     /**
      * Attrib loc, returned by gl.getAttribLocation().
      */
-    loc: number;
+    private loc;
     /**
      * The WebGLBuffer associated with this attribute.
      */
-    buffer: WebGLBuffer;
+    private buffer;
     /**
      * An internally managed AttribArray, which is a typed mutable array.
      */
-    attribArray: AttribArray;
+    private attribArray;
     /**
      * For a given attribute on a program on a context, create an AttribManager.
      * @param gl - The WebGL context to generate this attrib on.

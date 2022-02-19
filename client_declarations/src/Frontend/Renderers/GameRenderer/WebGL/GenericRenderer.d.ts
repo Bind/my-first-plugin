@@ -1,6 +1,6 @@
-import { AttribProps, DrawMode, UniformJSType, UniformProps } from "../EngineTypes";
-import AttribManager from "./AttribManager";
-import { WebGLManager } from "./WebGLManager";
+import { AttribProps, DrawMode, UniformJSType, UniformProps } from '../EngineTypes';
+import AttribManager from './AttribManager';
+import { WebGLManager } from './WebGLManager';
 declare type UniformData = {
     [key: string]: UniformProps;
 };
@@ -19,13 +19,13 @@ interface EngineProgramDefinition {
 }
 declare type UniformSetter = (el: UniformJSType) => void;
 declare type UniformSetters<T extends EngineProgramDefinition> = {
-    [k in keyof T["uniforms"]]: UniformSetter;
+    [k in keyof T['uniforms']]: UniformSetter;
 };
 declare type UniformLocs<T extends EngineProgramDefinition> = {
-    [k in keyof T["uniforms"]]: WebGLUniformLocation;
+    [k in keyof T['uniforms']]: WebGLUniformLocation;
 };
 declare type AttribManagers<T extends EngineProgramDefinition> = {
-    [k in keyof T["attribs"]]: AttribManager;
+    [k in keyof T['attribs']]: AttribManager;
 };
 /**
  * Takes in a gl context, program sources (frag and vert shader),

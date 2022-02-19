@@ -1,5 +1,6 @@
+/// <reference types="react" />
+import { PluginId } from '@darkforest_eth/types';
 import { PluginManager } from '../../Backend/GameLogic/PluginManager';
-import { PluginId } from '../../Backend/Plugins/SerializedPlugin';
 /**
  * Component for editing plugins. Saving causes its containing modal
  * to be closed, and the `overwrite` to be called, indicating that the

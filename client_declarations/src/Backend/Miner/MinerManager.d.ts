@@ -1,13 +1,13 @@
 /// <reference types="node" />
-import { PerlinConfig } from "@darkforest_eth/hashing";
+import { Chunk, PerlinConfig, Rectangle } from "@darkforest_eth/types";
 import { EventEmitter } from "events";
-import Worker from "worker-loader!./miner.worker";
 import { ChunkStore } from "../../_types/darkforest/api/ChunkStoreTypes";
-import { Chunk, HashConfig, Rectangle } from "../../_types/global/GlobalTypes";
+import { HashConfig } from "../../_types/global/GlobalTypes";
 import { MiningPattern } from "./MiningPatterns";
 export declare const enum MinerManagerEvent {
     DiscoveredNewChunk = "DiscoveredNewChunk"
 }
+export declare type workerFactory = () => Worker;
 export declare class HomePlanetMinerChunkStore implements ChunkStore {
     initPerlinMin: number;
     initPerlinMax: number;
@@ -38,12 +38,12 @@ declare class MinerManager extends EventEmitter {
     useMockHash: boolean;
     perlinOptions: PerlinConfig;
     hashConfig: HashConfig;
-    WorkerCtor: typeof Worker;
-    constructor(minedChunksStore: ChunkStore, miningPattern: MiningPattern, worldRadius: number, planetRarity: number, hashConfig: HashConfig, useMockHash: boolean, WorkerCtor: typeof Worker);
+    workerFactory: workerFactory;
+    constructor(minedChunksStore: ChunkStore, miningPattern: MiningPattern, worldRadius: number, planetRarity: number, hashConfig: HashConfig, useMockHash: boolean, workerFactory: workerFactory);
     setMiningPattern(pattern: MiningPattern): void;
     getMiningPattern(): MiningPattern;
     destroy(): void;
-    static create(chunkStore: ChunkStore, miningPattern: MiningPattern, worldRadius: number, planetRarity: number, hashConfig: HashConfig, useMockHash?: boolean, WorkerCtor?: typeof Worker): MinerManager;
+    static create(chunkStore: ChunkStore, miningPattern: MiningPattern, worldRadius: number, planetRarity: number, hashConfig: HashConfig, useMockHash?: boolean, workerFactory?: workerFactory): MinerManager;
     initWorker(index: number): void;
     onDiscovered(exploredChunk: Chunk, jobId: number): Promise<void>;
     exploreNext(fromChunk: Rectangle, jobId: number): void;

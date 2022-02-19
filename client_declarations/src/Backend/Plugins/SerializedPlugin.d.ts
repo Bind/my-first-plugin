@@ -1,6 +1,4 @@
-export declare type PluginId = string & {
-    __nothing__: never;
-};
+import { PluginId } from '@darkforest_eth/types';
 /**
  * Represents a plugin that the user has added to their game. Used
  * internally for storing plugins. Not used for evaluating plugins!

@@ -5,8 +5,8 @@ export interface TerminalHandle {
     printElement: (element: React.ReactElement) => void;
     printLoadingBar: (prettyEntityName: string, ref: React.RefObject<LoadingBarHandle>) => void;
     printLoadingSpinner: () => void;
-    print: (str: string, style?: TerminalTextStyle, hoverContents?: () => JSX.Element) => void;
-    println: (str: string, style?: TerminalTextStyle, hoverContents?: () => JSX.Element) => void;
+    print: (str: string, style?: TerminalTextStyle) => void;
+    println: (str: string, style?: TerminalTextStyle) => void;
     printShellLn: (str: string) => void;
     printLink: (str: string, onClick: () => void, style: TerminalTextStyle) => void;
     focus: () => void;

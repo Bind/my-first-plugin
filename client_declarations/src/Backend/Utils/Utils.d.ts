@@ -9,7 +9,6 @@ export declare const getUpgradeStat: (upgrade: Upgrade, stat: StatIdx) => number
 export declare const hslStr: (h: number, s: number, l: number) => string;
 export declare const getPlayerColor: (player: EthAddress) => string;
 export declare const getOwnerColor: (planet: Planet) => string;
-export declare const formatNumber: (num: number, smallDec?: number) => string;
 export declare const getRandomActionId: () => string;
 export declare const getFormatProp: (planet: Planet | undefined, prop: string) => string;
 export declare const getPlanetRank: (planet: Planet | undefined) => number;
@@ -19,5 +18,4 @@ export declare const isFullRank: (planet: Planet | undefined) => boolean;
 export declare const upgradeName: (branchName: UpgradeBranchName) => string;
 export declare const getPlanetMaxRank: (planet: Planet | undefined) => number;
 export declare const titleCase: (title: string) => string;
-export declare const hasOwner: (planet: Planet) => boolean;
 export {};

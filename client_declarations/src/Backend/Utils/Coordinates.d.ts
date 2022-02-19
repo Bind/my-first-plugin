@@ -1,9 +1,5 @@
-import { WorldCoords } from '@darkforest_eth/types';
+import { CanvasCoords, WorldCoords } from '@darkforest_eth/types';
 export declare const coordsEqual: (a: WorldCoords, b: WorldCoords) => boolean;
-export interface CanvasCoords {
-    x: number;
-    y: number;
-}
 export declare const distL2: (a: CanvasCoords | WorldCoords, b: CanvasCoords | WorldCoords) => number;
 export declare const vectorLength: (a: CanvasCoords | WorldCoords) => number;
 export declare const normalizeVector: (a: WorldCoords) => WorldCoords;

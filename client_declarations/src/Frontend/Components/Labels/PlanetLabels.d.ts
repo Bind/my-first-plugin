@@ -1,6 +1,12 @@
 import { Planet } from '@darkforest_eth/types';
 import React from 'react';
-export declare function StatText({ planet, getStat, style, }: {
+export declare function StatText({ planet, getStat, style, buff, }: {
+    planet: Planet | undefined;
+    getStat: (p: Planet) => number;
+    style?: React.CSSProperties;
+    buff?: number;
+}): JSX.Element;
+export declare function GrowthText({ planet, getStat, style, }: {
     planet: Planet | undefined;
     getStat: (p: Planet) => number;
     style?: React.CSSProperties;
@@ -26,11 +32,16 @@ export declare function PlanetSilverLabel({ planet }: {
 export declare const DefenseText: ({ planet }: {
     planet: Planet | undefined;
 }) => JSX.Element;
-export declare const RangeText: ({ planet }: {
+export declare const RangeText: ({ planet, buff }: {
+    planet: Planet | undefined;
+    buff?: number | undefined;
+}) => JSX.Element;
+export declare const JunkText: ({ planet }: {
     planet: Planet | undefined;
 }) => JSX.Element;
-export declare const SpeedText: ({ planet }: {
+export declare const SpeedText: ({ planet, buff }: {
     planet: Planet | undefined;
+    buff?: number | undefined;
 }) => JSX.Element;
 export declare const EnergyGrowthText: ({ planet }: {
     planet: Planet | undefined;

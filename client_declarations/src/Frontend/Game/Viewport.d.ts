@@ -1,8 +1,5 @@
-import { DiagnosticUpdater, Planet, WorldCoords } from "@darkforest_eth/types";
+import { CanvasCoords, Chunk, DiagnosticUpdater, Planet, WorldCoords } from "@darkforest_eth/types";
 import GameUIManager from "../../Backend/GameLogic/GameUIManager";
-import { CanvasCoords } from "../../Backend/Utils/Coordinates";
-import { Chunk } from "../../_types/global/GlobalTypes";
-import { AnimationManager } from "./ViewportAnimation";
 export declare const getDefaultScroll: () => number;
 declare type ViewportData = {
     widthInWorldUnits: number;
@@ -29,7 +26,6 @@ declare class Viewport {
     diagnosticUpdater?: DiagnosticUpdater;
     scale: number;
     isSending: boolean;
-    animationManager: AnimationManager;
     constructor(gameUIManager: GameUIManager, centerWorldCoords: WorldCoords, widthInWorldUnits: number, viewportWidth: number, viewportHeight: number, canvas: HTMLCanvasElement);
     setDiagnosticUpdater(diagnosticUpdater: DiagnosticUpdater): void;
     onSendInit(): void;

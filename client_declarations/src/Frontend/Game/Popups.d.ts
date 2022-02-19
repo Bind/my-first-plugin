@@ -1,4 +1,14 @@
-import { EthConnection, QueuedTransaction } from '@darkforest_eth/network';
-import { EthAddress } from '@darkforest_eth/types';
-import { BigNumber as EthersBN } from 'ethers';
-export declare function openConfirmationWindowForTransaction(ethConnection: EthConnection, txRequest: QueuedTransaction, from: EthAddress, gasFeeGwei: EthersBN): Promise<void>;
+import { EthConnection } from '@darkforest_eth/network';
+import { EthAddress, TransactionId, TxIntent } from '@darkforest_eth/types';
+import { BigNumber as EthersBN, providers } from 'ethers';
+interface OpenConfirmationConfig {
+    contractAddress: EthAddress;
+    connection: EthConnection;
+    id: TransactionId;
+    intent: TxIntent;
+    overrides?: providers.TransactionRequest;
+    from: EthAddress;
+    gasFeeGwei: EthersBN;
+}
+export declare function openConfirmationWindowForTransaction({ contractAddress, connection, id, intent, overrides, from, gasFeeGwei, }: OpenConfirmationConfig): Promise<void>;
+export {};
